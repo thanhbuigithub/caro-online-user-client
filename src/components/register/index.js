@@ -70,7 +70,7 @@ function Register() {
 
   const register = async (event) => {
     if (confirmPassword !== password) {
-      setError("Confirm password don't match");
+      setError("Xác nhận mật khẩu không trùng khớp");
     } else {
       try {
         setFetching(true);
@@ -189,16 +189,16 @@ function Register() {
                 <CircularProgress />
               </StyledButton>
             ) : (
-              <StyledButton
-                variant="contained"
-                className={classes.button}
-                backgroundColor={lightBlue}
-                textColor="white"
-                onClick={register}
-              >
-                REGISTER
-              </StyledButton>
-            )}
+                <StyledButton
+                  variant="contained"
+                  className={classes.button}
+                  backgroundColor={lightBlue}
+                  textColor="white"
+                  onClick={register}
+                >
+                  REGISTER
+                </StyledButton>
+              )}
           </div>
         </div>
       </Grid>

@@ -21,14 +21,6 @@ function Home() {
   let history = useHistory();
   const { listUserOnline } = useContext(UserContext);
 
-  function generate(element) {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((value) =>
-      React.cloneElement(element, {
-        key: value,
-      })
-    );
-  }
-
   return (
     <div className={classes.root}>
       <Grid container spacing={2} style={{ height: "100%" }}>
@@ -40,7 +32,7 @@ function Home() {
             <Grid item className={classes.list}>
               <List style={{ padding: 0 }}>
                 {listUserOnline.map((user) => (
-                  <ListItem className={classes.itemUser}>
+                  <ListItem key={user.id} className={classes.itemUser}>
                     <ListItemAvatar>
                       <Avatar>
                         <PersonIcon />

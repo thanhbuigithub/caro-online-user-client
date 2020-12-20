@@ -42,7 +42,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function Header({}) {
+function Header({ }) {
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -74,6 +74,7 @@ function Header({}) {
   useEffect(() => {
     const getProfile = async () => {
       try {
+        const token = Auth.getAccessToken();
         const user = await userApi.getProfile();
         setUser(user);
         setNewName(user.name);
@@ -316,7 +317,7 @@ function Header({}) {
             alignItems: "center",
           }}
         >
-          {error ? <Alert severity="error">{error}</Alert> : null}
+          {error ? <Alert severity="error" style={{ marginTop: '10px' }}>{error}</Alert> : null}
           <TextField
             className={classes.textField}
             label="Old Password"

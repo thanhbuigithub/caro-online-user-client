@@ -8,6 +8,7 @@ const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "content-type": "application/json",
+
   },
   paramsSerializer: (params) => queryString.stringify(params),
 });
@@ -16,7 +17,7 @@ axiosClient.interceptors.request.use(
   async (config) => {
     const token = cookieService.get("access_token");
     if (token) {
-      config.headers["Authorization"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     config.headers["Content-Type"] = "application/json";
     return config;

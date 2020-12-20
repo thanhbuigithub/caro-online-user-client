@@ -30,10 +30,23 @@ const userApi = {
   },
 
   changePassword: (oldPassword, newPassword) => {
-    const url = `/user/changePassword`;
-    return axiosClient.post(url, {
+    const url = `/user/change_password`;
+    return axiosClient.put(url, {
       oldPassword: oldPassword,
-      newPassword: newPassword,
+      newPassword: newPassword
+    });
+  },
+  forgotPassword: (email) => {
+    const url = `/user/forgot_password`;
+    return axiosClient.post(url, {
+      email: email,
+    });
+  },
+  resetPassword: (new_password, reset_password_link) => {
+    const url = `/user/reset_password`;
+    return axiosClient.put(url, {
+      newPassWord: new_password,
+      resetPassWordLink: reset_password_link,
     });
   },
 

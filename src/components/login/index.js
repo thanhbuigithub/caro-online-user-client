@@ -213,7 +213,7 @@ function Login() {
             <a href="/register" id="register">
               Register now
             </a>
-            <a href="" id="forgot-password">
+            <a href="/forgot_password" id="forgot-password">
               Forgot password?
             </a>
           </div>
