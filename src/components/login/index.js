@@ -10,6 +10,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import PersonIcon from "@material-ui/icons/Person";
 import FacebookIcon from "@material-ui/icons/Facebook";
+import queryString from 'query-string';
 
 import Grid from "@material-ui/core/Grid";
 import {
@@ -36,7 +37,7 @@ import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
 import cookieService from "../../service/cookieService";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -60,7 +61,7 @@ function StyledCheckbox(props) {
   );
 }
 
-const StyledButton = ({ children, backgroundColor, textColor, ...prop }) => {
+const StyledButton = ({ children, backgroundColor, textColor, ...props }) => {
   const ColorButton = withStyles(() => ({
     root: {
       color: textColor,
@@ -70,17 +71,24 @@ const StyledButton = ({ children, backgroundColor, textColor, ...prop }) => {
       },
     },
   }))(Button);
-  return <ColorButton {...prop}>{children}</ColorButton>;
+  return <ColorButton {...props}>{children}</ColorButton>;
 };
 
 function Login() {
+  let history = useHistory();
+  const query = new URLSearchParams(useLocation().search);
+  const token = query.get('token');
+  if (token) {
+    cookieService.set("access_token", token);
+    history.push('/')
+  }
   const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [fetching, setFetching] = useState(false);
-  let history = useHistory();
+
 
   const login = async (event) => {
     try {
@@ -98,18 +106,18 @@ function Login() {
     }
   };
 
-  const responseGoogle = async (response) => {
-    console.log(response);
-    try {
-      const res = await userApi.loginGoogle(response.tokenId);
-      cookieService.set("access_token", res);
-      history.push("/");
-    } catch (err) {
-      console.log(err.response);
-      if (!err.response) setError("Server is closed");
-      else setError(err.response.data);
-    }
-  };
+  // const responseGoogle = async (response) => {
+  //   console.log(response);
+  //   try {
+  //     const res = await userApi.loginGoogle(response.tokenId);
+  //     cookieService.set("access_token", res);
+  //     history.push("/");
+  //   } catch (err) {
+  //     console.log(err.response);
+  //     if (!err.response) setError("Server is closed");
+  //     else setError(err.response.data);
+  //   }
+  // };
 
   const responseFacebook = async (response) => {
     console.log();
@@ -124,6 +132,7 @@ function Login() {
       console.log(err.response);
       if (!err.response) setError("Server is closed");
       else setError(err.response.data);
+      history.push("/login");
     }
   };
 
@@ -137,7 +146,7 @@ function Login() {
         sm={8}
         md={6}
         elevation={6}
-        square
+        square="true"
         alignItems="center"
         direction="column"
         justify="center"
@@ -219,9 +228,9 @@ function Login() {
           </div>
 
           <div className="divider">
-            <hr class="solid" />
+            <hr className="solid" />
             <span>or</span>
-            <hr class="solid" />
+            <hr className="solid" />
           </div>
 
           <div className="input">
@@ -247,15 +256,15 @@ function Login() {
             />
           </div>
 
-          <div className="input">
+          {/* <div className="input">
             <div className="input-label google-button">
-              <img src="/google.png" alt="" srcset="" />
+              <img src="/google.png" alt="" />
             </div>
 
             <GoogleLogin
               clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}
               onSuccess={responseGoogle}
-              // onFailure={responseGoogle}
+              onFailure={responseGoogle}
               cookiePolicy={"single_host_origin"}
               render={(renderProps) => (
                 <StyledButton
@@ -270,6 +279,24 @@ function Login() {
                 </StyledButton>
               )}
             />
+          </div> */}
+
+          <div className="input">
+            <div className="input-label google-button">
+              <img src="/google.png" alt="" />
+            </div>
+
+            <StyledButton
+              href={`${process.env.REACT_APP_API_URL}/user/login/google`}
+              className={classes.input}
+              variant="contained"
+              backgroundColor={red}
+              // onClick={async () => {
+              //   fetch(`/user/login/google`, { method: 'GET', mode: 'no-cors' })
+              // }}
+              textColor="white">
+              LOGIN WITH GOOGLE
+            </StyledButton>
           </div>
         </div>
       </Grid>

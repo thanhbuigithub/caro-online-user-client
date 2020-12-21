@@ -50,11 +50,16 @@ const userApi = {
     });
   },
 
-  loginGoogle: (id_token) => {
-    const url = "/user/google_login";
-    return axiosClient.post(url, {
-      id_token: id_token,
-    });
+  // loginGoogle: (id_token) => {
+  //   const url = "/user/google_login";
+  //   return axiosClient.post(url, {
+  //     id_token: id_token,
+  //   });
+  // },
+
+  loginGoogle: () => {
+    const url = "/user/login/google";
+    return axiosClient.get(url);
   },
 
   loginFacebook: (user_id, access_token) => {
