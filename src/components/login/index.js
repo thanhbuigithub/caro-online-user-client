@@ -84,7 +84,7 @@ function Login() {
       });
     });
   } else {
-    localStorage.setItem('isSocial', false);
+    localStorage.setItem('isSocial', null);
   }
 
   const classes = useStyles();
@@ -242,22 +242,15 @@ function Login() {
               <FacebookIcon style={{ color: grey[200] }} />
             </div>
 
-            <FacebookLogin
-              appId={`${process.env.REACT_APP_FACEBOOK_CLIENT_ID}`}
-              autoLoad={false}
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <StyledButton
-                  className={classes.input}
-                  variant="contained"
-                  backgroundColor={indigo}
-                  textColor="white"
-                  onClick={renderProps.onClick}
-                >
-                  LOGIN WITH FACEBOOK
+            <StyledButton
+              href={`${process.env.REACT_APP_API_URL}/user/login/facebook`}
+              className={classes.input}
+              variant="contained"
+              backgroundColor={indigo}
+              textColor="white"
+            >
+              LOGIN WITH FACEBOOK
                 </StyledButton>
-              )}
-            />
           </div>
 
           <div className="input">

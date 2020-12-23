@@ -62,13 +62,18 @@ const userApi = {
     return axiosClient.get(url);
   },
 
-  loginFacebook: (user_id, access_token) => {
-    const url = "/user/facebook_login";
-    return axiosClient.post(url, {
-      user_id: user_id,
-      access_token: access_token,
-    });
+  loginFacebook: () => {
+    const url = "/user/login/facebook";
+    return axiosClient.get(url);
   },
+
+  // loginFacebook: (user_id, access_token) => {
+  //   const url = "/user/facebook_login";
+  //   return axiosClient.post(url, {
+  //     user_id: user_id,
+  //     access_token: access_token,
+  //   });
+  // },
 
   active: (token) => {
     const url = "/user/active";

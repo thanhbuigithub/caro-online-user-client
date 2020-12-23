@@ -17,7 +17,6 @@ import JoinGameButton from "../game/JoinGameButton";
 import UserContext from "../../contexts/UserContext";
 
 function Home() {
-
   const classes = useStyles();
   let history = useHistory();
   const { listUserOnline } = useContext(UserContext);

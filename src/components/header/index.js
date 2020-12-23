@@ -238,7 +238,7 @@ function Header({ isSocialLogin }) {
           getContentAnchorEl={null}
         >
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          {isSocialLogin !== 'true' ? (<MenuItem onClick={handleChangePassword}>Change Password</MenuItem>) : null}
+          {!isSocialLogin ? <MenuItem onClick={handleChangePassword}>Change Password</MenuItem> : null}
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </div>
