@@ -101,7 +101,6 @@ function Login() {
       const res = await userApi.login(username, password);
       auth.setAccessToken(res, () => {
         setFetching(false);
-        console.log(res);
         history.push("/");
       });
     } catch (err) {

@@ -1,5 +1,6 @@
 import cookieService from "../../../service/cookieService";
-
+import SocketManager from "../../../socketio/SocketManager";
+const socket = SocketManager.getSocket();
 const Auth = {
 
   setUser: function (user, next) {

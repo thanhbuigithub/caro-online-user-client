@@ -16,7 +16,6 @@ let socketManager = {
   closeSocket: function () {
     socket.disconnect();
     socket.off();
-    console.log(socket);
   },
 };
 

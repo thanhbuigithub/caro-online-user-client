@@ -65,7 +65,6 @@ function Header({ isSocialLogin }) {
       console.log("New Connect");
       setListUserOnline(list_user_online);
     });
-
     // return () => {
     //   socketManager.closeSocket();
     // };
@@ -186,6 +185,7 @@ function Header({ isSocialLogin }) {
 
   const handleLogout = () => {
     handleMenuClose();
+    socketManager.closeSocket();
     Auth.logout(() => {
       history.push("/login");
     });
@@ -238,7 +238,7 @@ function Header({ isSocialLogin }) {
           getContentAnchorEl={null}
         >
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          {isSocialLogin == 'true' ? (<MenuItem onClick={handleChangePassword}>Change Password</MenuItem>) : null}
+          {isSocialLogin !== 'true' ? (<MenuItem onClick={handleChangePassword}>Change Password</MenuItem>) : null}
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </div>
