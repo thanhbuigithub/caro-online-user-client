@@ -1,7 +1,7 @@
 import axios from "axios";
 import queryString from "query-string";
 import cookieService from "../service/cookieService";
-
+import auth from "../components/common/router/auth";
 // Set up default config for http requests here
 // Please have a look at here `https://github.com/axios/axios#request- config` for the full list of configs
 const axiosClient = axios.create({
@@ -14,7 +14,8 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
   async (config) => {
-    const token = cookieService.get("access_token");
+    // const token = cookieService.get("access_token");
+    const token = auth.getAccessToken();
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

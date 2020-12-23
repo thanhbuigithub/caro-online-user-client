@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import useStyles from "./muiStyle";
 import "./index.css";
 import Paper from "@material-ui/core/Paper";
@@ -17,6 +17,7 @@ import JoinGameButton from "../game/JoinGameButton";
 import UserContext from "../../contexts/UserContext";
 
 function Home() {
+
   const classes = useStyles();
   let history = useHistory();
   const { listUserOnline } = useContext(UserContext);

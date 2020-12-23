@@ -36,7 +36,7 @@ import { lightBlue, indigo, red, grey } from "@material-ui/core/colors";
 import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
-import cookieService from "../../service/cookieService";
+
 import { useHistory } from "react-router-dom";
 
 function Alert(props) {

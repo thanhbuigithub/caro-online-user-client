@@ -11,11 +11,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
         if (auth.isAuthenticated())
           return (
             <>
-              <Header />
+              <Header isSocialLogin={auth.isSocialLogin()} />
               <Component {...props} />
             </>
           );
-        else return <Redirect to={{ pathname: "/login" }} />;
+        else {
+          return <Redirect to={{ pathname: "/login" }} />
+        };
       }}
     />
   );

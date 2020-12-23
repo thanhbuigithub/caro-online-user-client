@@ -10,7 +10,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import PersonIcon from "@material-ui/icons/Person";
 import FacebookIcon from "@material-ui/icons/Facebook";
-import queryString from 'query-string';
+import auth from "../common/router/auth";
 
 import Grid from "@material-ui/core/Grid";
 import {
@@ -36,8 +36,7 @@ import { lightBlue, indigo, red, grey } from "@material-ui/core/colors";
 import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
-import cookieService from "../../service/cookieService";
-import { useHistory, useLocation } from "react-router-dom";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
 
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -76,12 +75,18 @@ const StyledButton = ({ children, backgroundColor, textColor, ...props }) => {
 
 function Login() {
   let history = useHistory();
-  const query = new URLSearchParams(useLocation().search);
-  const token = query.get('token');
+  const token = useLocation().search.split('=')[1];
   if (token) {
-    cookieService.set("access_token", token);
-    history.push('/')
+    auth.setAccessToken(token, () => {
+      localStorage.setItem('isSocial', true);
+      history.push({
+        pathname: '/',
+      });
+    });
+  } else {
+    localStorage.setItem('isSocial', false);
   }
+
   const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -94,10 +99,11 @@ function Login() {
     try {
       setFetching(true);
       const res = await userApi.login(username, password);
-      cookieService.set("access_token", res);
-      setFetching(false);
-      console.log(res);
-      history.push("/");
+      auth.setAccessToken(res, () => {
+        setFetching(false);
+        console.log(res);
+        history.push("/");
+      });
     } catch (err) {
       console.log(err.response);
       if (!err.response) setError("Server is closed");
@@ -120,13 +126,12 @@ function Login() {
   // };
 
   const responseFacebook = async (response) => {
-    console.log();
     try {
       const res = await userApi.loginFacebook(
         response.userID,
         response.accessToken
       );
-      cookieService.set("access_token", res);
+      auth.setAccessToken(res);
       history.push("/");
     } catch (err) {
       console.log(err.response);
@@ -137,7 +142,7 @@ function Login() {
   };
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid Grid container component="main" className={classes.root} >
       <CssBaseline />
 
       <Grid
@@ -256,31 +261,6 @@ function Login() {
             />
           </div>
 
-          {/* <div className="input">
-            <div className="input-label google-button">
-              <img src="/google.png" alt="" />
-            </div>
-
-            <GoogleLogin
-              clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              cookiePolicy={"single_host_origin"}
-              render={(renderProps) => (
-                <StyledButton
-                  className={classes.input}
-                  variant="contained"
-                  backgroundColor={red}
-                  textColor="white"
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                >
-                  LOGIN WITH GOOGLE
-                </StyledButton>
-              )}
-            />
-          </div> */}
-
           <div className="input">
             <div className="input-label google-button">
               <img src="/google.png" alt="" />
@@ -291,9 +271,6 @@ function Login() {
               className={classes.input}
               variant="contained"
               backgroundColor={red}
-              // onClick={async () => {
-              //   fetch(`/user/login/google`, { method: 'GET', mode: 'no-cors' })
-              // }}
               textColor="white">
               LOGIN WITH GOOGLE
             </StyledButton>
@@ -302,7 +279,7 @@ function Login() {
       </Grid>
 
       <Grid item xs={false} sm={4} md={6} className={classes.image} />
-    </Grid>
+    </Grid >
   );
 }
 

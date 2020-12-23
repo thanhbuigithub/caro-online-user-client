@@ -19,6 +19,7 @@ import userApi from "../../api/userApi";
 import MuiAlert from "@material-ui/lab/Alert";
 import socketManager from "../../socketio/SocketManager";
 import UserContext from "../../contexts/UserContext";
+import auth from "../common/router/auth";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -42,7 +43,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function Header({ }) {
+function Header({ isSocialLogin }) {
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -58,7 +59,6 @@ function Header({ }) {
   useEffect(() => {
     const token = Auth.getAccessToken();
     const user = jwt_decode(token);
-    console.log(user, token);
     let socket = socketManager.getSocket();
     socket.emit("join", user.username);
     socket.on("new_connect", (list_user_online) => {
@@ -74,11 +74,20 @@ function Header({ }) {
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const token = Auth.getAccessToken();
         const user = await userApi.getProfile();
-        setUser(user);
-        setNewName(user.name);
-        setNewEmail(user.email);
+        if (user) {
+          auth.setUser(user, () => {
+            setUser(user);
+            setNewName(user.name);
+            setNewEmail(user.email);
+          });
+        } else {
+          const profileUser = auth.getUser();
+          setUser(profileUser);
+          setNewName(profileUser.name);
+          setNewEmail(profileUser.email);
+        }
+
       } catch (err) {
         console.log("header: Failed to get profile: ", err);
       }
@@ -177,8 +186,9 @@ function Header({ }) {
 
   const handleLogout = () => {
     handleMenuClose();
-    Auth.logout();
-    history.push("/login");
+    Auth.logout(() => {
+      history.push("/login");
+    });
   };
 
   return (
@@ -228,7 +238,7 @@ function Header({ }) {
           getContentAnchorEl={null}
         >
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleChangePassword}>Change Password</MenuItem>
+          {isSocialLogin == 'true' ? (<MenuItem onClick={handleChangePassword}>Change Password</MenuItem>) : null}
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </div>
