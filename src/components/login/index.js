@@ -36,7 +36,7 @@ import { lightBlue, indigo, red, grey } from "@material-ui/core/colors";
 import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { Redirect, useNavigate, useLocation } from "react-router-dom";
 
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -74,7 +74,7 @@ const StyledButton = ({ children, backgroundColor, textColor, ...props }) => {
 };
 
 function Login() {
-  let history = useHistory();
+  let history = useNavigate();
   const token = useLocation().search.split('=')[1];
   if (token) {
     auth.setAccessToken(token, () => {
@@ -83,8 +83,6 @@ function Login() {
         pathname: '/',
       });
     });
-  } else {
-    localStorage.setItem('isSocial', null);
   }
 
   const classes = useStyles();

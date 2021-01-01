@@ -79,12 +79,12 @@ export default function ResetPassWord({ match }) {
     });
     const { token, passWordNew, passWordConfirm, showLogin } = form;
 
-    useEffect(() => {
-        let token = match.params.token;
-        if (token) {
-            setForm({ ...form, token });
-        };
-    }, []);// eslint-disable-line react-hooks/exhaustive-deps
+    // useEffect(() => {
+    //     let token = match.params.token;
+    //     if (token) {
+    //         setForm({ ...form, token });
+    //     };
+    // }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     const handleChange = text => e => {
         setForm({ ...form, [text]: e.target.value });

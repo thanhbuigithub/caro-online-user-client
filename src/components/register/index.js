@@ -37,7 +37,7 @@ import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
 
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -66,7 +66,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [fetching, setFetching] = useState(false);
-  let history = useHistory();
+  let history = useNavigate();
 
   const register = async (event) => {
     if (confirmPassword !== password) {

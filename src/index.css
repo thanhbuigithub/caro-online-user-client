@@ -21,3 +21,8 @@ code {
   font-family:'ThirstyScript';
   src: url('./library/fonts/thirstyscriptextrabold.otf');
 }
+
+@font-face{
+  font-family:'ThirstyScriptRegular';
+  src: url('./library/fonts/thirsty-script-extrabold-demo.regular.otf');
+}

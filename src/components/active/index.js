@@ -36,7 +36,7 @@ import useStyles from "./muiStyle";
 
 import userApi from "../../api/userApi";
 import cookieService from "../../service/cookieService";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
@@ -80,7 +80,7 @@ function Active({ match }) {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [fetching, setFetching] = useState(false);
-  let history = useHistory();
+  let history = useNavigate();
 
   const active = async (event) => {
     try {

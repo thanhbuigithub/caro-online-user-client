@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useStyles from "./muiStyle";
 import "./index.css";
 import Paper from "@material-ui/core/Paper";
@@ -18,7 +18,7 @@ import UserContext from "../../contexts/UserContext";
 
 function Home() {
   const classes = useStyles();
-  let history = useHistory();
+  let history = useNavigate();
   const { listUserOnline } = useContext(UserContext);
 
   return (

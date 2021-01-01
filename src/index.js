@@ -5,15 +5,15 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import UserProvider from "./provider/UserProvider";
 import GameProvider from "./provider/GameProvider";
-
+import { BrowserRouter } from 'react-router-dom';
 ReactDOM.render(
-  <React.StrictMode>
-    <UserProvider>
-      <GameProvider>
+  <UserProvider>
+    <GameProvider>
+      <BrowserRouter>
         <App />
-      </GameProvider>
-    </UserProvider>
-  </React.StrictMode>,
+      </BrowserRouter>
+    </GameProvider>
+  </UserProvider>,
   document.getElementById("root")
 );
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import auth from "../auth";
 import Header from "../../../header";
 
@@ -16,7 +16,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
             </>
           );
         else {
-          return <Redirect to={{ pathname: "/login" }} />
+          return <Navigate to={{ pathname: "/login" }} />
         };
       }}
     />

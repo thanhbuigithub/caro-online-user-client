@@ -22,7 +22,7 @@ const Auth = {
     // return cookieService.get("access_token");
   },
   isAuthenticated: function () {
-    return localStorage.getItem('access_token') ? true : false;
+    return localStorage.getItem('access_token') ? false : true;
     // return cookieService.get("access_token") ? true : false;
   },
   logout: function (next) {
