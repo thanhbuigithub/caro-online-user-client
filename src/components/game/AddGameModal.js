@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   withStyles,
   makeStyles,
@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import SocketManager from "../../socketio/SocketManager";
 import { useHistory } from "react-router-dom";
+import GameContext from "../../contexts/GameContext";
 
 const theme = createMuiTheme({
   palette: {
@@ -89,6 +90,7 @@ export default function AddBoardModal({ handleToggleModal, onAddBoard }) {
   const { name, content } = form;
   const socket = SocketManager.getSocket();
   let history = useHistory();
+  const { init } = useContext(GameContext);
 
   const handleChange = (text) => (e) => {
     setForm({ ...form, [text]: e.target.value });
@@ -106,8 +108,10 @@ export default function AddBoardModal({ handleToggleModal, onAddBoard }) {
   };
 
   useEffect(() => {
-    socket.on("create-room-successful", (id) => {
-      history.push(`/game/${id}`);
+    socket.on("create-room-successful", (room) => {
+      history.push(`/game/${room.id}`);
+      init(room);
+      console.log(room);
     });
   }, []);
 

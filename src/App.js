@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/common/router/protected";
 import GuestRoute from "./components/common/router/guest";
 import Register from "./components/register";
 import { Dashboard } from "@material-ui/icons";
+import GameProvider from "./provider/GameProvider";
 
 const guestRoutes = [
   { path: "/login", component: Login, exact: true },
@@ -23,35 +24,37 @@ const protectedRoutes = [
 
 function App() {
   return (
-    <div
-      className="App"
-      style={{ height: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      <BrowserRouter>
-        <Switch>
-          {guestRoutes.map((route, key) => {
-            return (
-              <GuestRoute
-                exact={route.exact}
-                path={route.path}
-                component={route.component}
-                key={key}
-              />
-            );
-          })}
-          {protectedRoutes.map((route, key) => {
-            return (
-              <ProtectedRoute
-                exact={route.exact}
-                path={route.path}
-                component={route.component}
-                key={key}
-              />
-            );
-          })}
-        </Switch>
-      </BrowserRouter>
-    </div>
+    <GameProvider>
+      <div
+        className="App"
+        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
+        <BrowserRouter>
+          <Switch>
+            {guestRoutes.map((route, key) => {
+              return (
+                <GuestRoute
+                  exact={route.exact}
+                  path={route.path}
+                  component={route.component}
+                  key={key}
+                />
+              );
+            })}
+            {protectedRoutes.map((route, key) => {
+              return (
+                <ProtectedRoute
+                  exact={route.exact}
+                  path={route.path}
+                  component={route.component}
+                  key={key}
+                />
+              );
+            })}
+          </Switch>
+        </BrowserRouter>
+      </div>
+    </GameProvider>
   );
 }
 

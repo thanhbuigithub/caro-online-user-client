@@ -90,7 +90,7 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
   const { id, content } = form;
   const socket = SocketManager.getSocket();
   let history = useHistory();
-  const { setPlayerType } = useContext(GameContext);
+  const { init } = useContext(GameContext);
 
   const handleChange = (text) => (e) => {
     setForm({ ...form, [text]: e.target.value });
@@ -105,9 +105,10 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
   };
 
   useEffect(() => {
-    socket.on("join-room-successful", (id) => {
-      setPlayerType("O");
-      history.push(`/game/${id}`);
+    socket.on("join-room-successful", (room) => {
+      history.push(`/game/${room.id}`);
+      init(room);
+      console.log(room);
     });
   }, []);
 

@@ -39,14 +39,14 @@ function Home() {
             </Grid>
             <Grid item className={classes.list}>
               <List style={{ padding: 0 }}>
-                {listUserOnline.map((user) => (
+                {listUserOnline.map((username) => (
                   <ListItem className={classes.itemUser}>
                     <ListItemAvatar>
                       <Avatar>
                         <PersonIcon />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={user.username} />
+                    <ListItemText primary={username} />
                     <Brightness1Icon className={classes.iconOnline} />
                   </ListItem>
                 ))}

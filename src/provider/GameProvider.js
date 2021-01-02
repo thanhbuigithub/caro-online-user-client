@@ -4,241 +4,88 @@ import GameContext from "../contexts/GameContext";
 import config from "../config/Config";
 
 const GameProvider = (props) => {
-  const [history, setHistory] = useState([
-    {
-      x: null,
-      y: null,
-      cells: Array(config.boardSize.row)
-        .fill(null)
-        .map(() => {
-          return Array(config.boardSize.col).fill(null);
-        }),
-    },
-  ]);
-  const [stepNumber, setStepNumber] = useState(0);
+  const [board, setBoard] = useState(
+    Array(config.boardSize.row)
+      .fill(null)
+      .map(() => {
+        return Array(config.boardSize.col).fill(null);
+      })
+  );
+
+  const [history, setHistory] = useState([]);
+
   const [turn, setTurn] = useState(config.playerX);
-  const [isAscending, setIsAscending] = useState(true);
-  const [gameover, setGameover] = useState(false);
-  const [winCells, setWinCells] = useState(null);
-  const [isWaiting, setIsWaiting] = useState(true);
-  const [roomInfo, setRoomInfo] = useState({});
-  const [playerType, setPlayerType] = useState(config.playerX);
+  const [winLine, setWinLine] = useState(null);
   const [roomId, setRoomId] = useState("");
-  const [chatHistory, setChatHistory] = useState({});
+  const [chatHistory, setChatHistory] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [playerX, setPlayerX] = useState(null);
+  const [playerO, setPlayerO] = useState(null);
+  const [playerXReady, setPlayerXReady] = useState(false);
+  const [playerOReady, setPlayerOReady] = useState(false);
+  const [state, setState] = useState(config.GAME_STATE.UNREADY);
+  const [preMove, setPreMove] = useState(null);
+  const [currentTick, setCurrentTick] = useState(0);
 
-  function handleClick(row, col) {
-    console.log("GameProvider: handleClick");
-    const curHistory = history.slice(0, stepNumber + 1);
-    const current = curHistory[curHistory.length - 1];
-    const cells = JSON.parse(JSON.stringify(current.cells));
+  function init(room) {
+    setRoomId(room.id);
+    setPlayers(room.players);
+    setPlayerX(room.playerX);
+    setPlayerO(room.playerO);
+    setPlayerXReady(room.playerXready);
+    setPlayerOReady(room.playerOReady);
+    setState(room.state);
+    setChatHistory(room.chatHistory);
 
-    if (gameover || cells[row][col]) {
-      return false;
+    const newBoard = Array(config.boardSize.row)
+      .fill(null)
+      .map(() => {
+        return Array(config.boardSize.col).fill(null);
+      });
+
+    let newHistory = [];
+
+    let newTurn = config.playerX;
+    let newPreMove = null;
+    let newCurrentTick = 0;
+    let newWinLine = null;
+
+    if (room.game !== null) {
+      newHistory = room.game.history;
+      newTurn = room.game.turn;
+      newPreMove = room.game.preMove;
+      newCurrentTick = room.game.currentTick;
+      newWinLine = room.game.winLine;
+
+      room.game.history.forEach((move) => {
+        newBoard[move.x][move.y] = move.chess;
+      });
     }
-
-    cells[row][col] = turn;
-
-    let _winCells = checkWin(row, col, turn, curHistory.length - 1);
-
-    if (_winCells !== null) {
-      setWinCells(_winCells);
-      setGameover(true);
-    }
-
-    console.log("setHistory: ");
-
-    setHistory((history) => {
-      const curHistory = history.slice(0, stepNumber + 1);
-      return curHistory.concat([
-        {
-          cells: cells,
-          x: row,
-          y: col,
-          turn: turn,
-        },
-      ]);
-    });
-
-    setStepNumber((stepNumber) => {
-      return curHistory.length;
-    });
-    console.log(curHistory);
-    console.log("turn: " + turn);
-    let nextTurn = turn === config.playerX ? config.playerO : config.playerX;
-    console.log("next turn: " + nextTurn);
-    setTurn((turn) =>
-      turn === config.playerX ? config.playerO : config.playerX
-    );
-
-    return true;
+    setHistory(newHistory);
+    setTurn(newTurn);
+    setPreMove(newPreMove);
+    setCurrentTick(newCurrentTick);
+    setWinLine(newWinLine);
+    setBoard(newBoard);
   }
 
-  function checkWin(row, col, user, stepNumber) {
-    if (stepNumber === 0) {
-      return null;
-    }
-
-    const current = history[stepNumber];
-    const cells = current.cells.slice();
-
-    // Get coordinates
-    let coorX = row;
-    let coorY = col;
-
-    let countCol = 1;
-    let countRow = 1;
-    let countMainDiagonal = 1;
-    let countSkewDiagonal = 1;
-    let isBlock;
-    const rival = user === config.xPlayer ? config.oPlayer : config.xPlayer;
-
-    // Check col
-    isBlock = true;
-    let winCells = [];
-    coorX -= 1;
-    while (coorX >= 0 && cells[coorX][coorY] === user) {
-      countCol += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
-    }
-    if (coorX >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    while (coorX <= config.brdSize - 1 && cells[coorX][coorY] === user) {
-      countCol += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-    }
-    if (coorX <= config.brdSize - 1 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    if (isBlock === false && countCol >= 5) return winCells;
-
-    // Check row
-    isBlock = true;
-    winCells = [];
-    coorY -= 1;
-    while (coorY >= 0 && cells[coorX][coorY] === user) {
-      countRow += 1;
-      winCells.push([coorX, coorY]);
-      coorY -= 1;
-    }
-    if (coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorY += 1;
-    while (coorY <= config.brdSize - 1 && cells[coorX][coorY] === user) {
-      countRow += 1;
-      winCells.push([coorX, coorY]);
-      coorY += 1;
-    }
-    if (coorY <= config.brdSize - 1 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorY = col;
-    if (isBlock === false && countRow >= 5) return winCells;
-
-    // Check main diagonal
-    isBlock = true;
-    winCells = [];
-    coorX -= 1;
-    coorY -= 1;
-    while (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] === user) {
-      countMainDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
-      coorY -= 1;
-    }
-    if (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY += 1;
-    while (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] === user
-    ) {
-      countMainDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-      coorY += 1;
-    }
-    if (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] !== rival
-    ) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    if (isBlock === false && countMainDiagonal >= 5) return winCells;
-
-    // Check skew diagonal
-    isBlock = true;
-    winCells = [];
-    coorX -= 1;
-    coorY += 1;
-    while (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] === user) {
-      countSkewDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
-      coorY += 1;
-    }
-    if (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY -= 1;
-    while (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] === user
-    ) {
-      countSkewDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-      coorY -= 1;
-    }
-    if (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] !== rival
-    ) {
-      isBlock = false;
-    }
-    if (isBlock === false && countSkewDiagonal >= 5) return winCells;
-
-    return null;
+  function moveHandler(move) {
+    const newBoard = JSON.parse(JSON.stringify(board));
+    newBoard[move.x][move.y] = move.chess;
+    setBoard(newBoard);
+    setHistory([...history, move]);
   }
 
   return (
     <GameContext.Provider
       value={{
+        board,
         history,
-        stepNumber,
         turn,
-        gameover,
-        winCells,
-        isWaiting,
-        roomInfo,
-        playerType,
-        handleClick,
-        setRoomId,
-        setPlayerType,
+        winLine,
+        moveHandler,
+        setWinLine,
+        init,
       }}
     >
       {props.children}
