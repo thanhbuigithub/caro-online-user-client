@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import UserContext from '../../../contexts/UserContext';
+import swal from 'sweetalert';
 import {
   Box,
   Button,
@@ -50,21 +52,15 @@ const useStyles = makeStyles((theme) => ({
 const ProfileDetails = ({ className, ...rest }) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
-  });
+  const { user, handleChangeProfile } = useContext(UserContext);
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
-        email: '1@gmail.com',
-        userName: '111',
-        fullName: 'huuthr',
+        email: user.email,
+        userName: user.username,
+        fullName: user.name,
       }}
       validationSchema={
         Yup.object().shape({
@@ -73,8 +69,27 @@ const ProfileDetails = ({ className, ...rest }) => {
           fullName: Yup.string().max(255).required('Full name is required')
         })
       }
-      onSubmit={(values) => {
-        alert(JSON.stringify(values));
+      onSubmit={(values, { resetForm }) => {
+        swal({
+          title: "Do you want to update information?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+          .then((willDelete) => {
+            if (willDelete) {
+              handleChangeProfile(values.fullName, values.email, values.userName);
+              swal("Yeah! Your profile has been changed!", {
+                icon: "success",
+                buttons: false,
+                timer: 1000,
+              });
+            } else {
+              swal("Your profile not change!", { icon: "warning", timer: 1000, buttons: false, });
+              resetForm();
+            }
+          });
+
       }}
     >
       {({

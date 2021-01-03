@@ -1,26 +1,27 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
-  login: (username, password) => {
+  login: (userName, password) => {
     const url = "/user/login";
-    return axiosClient.post(url, { username: username, password: password });
+    return axiosClient.post(url, { username: userName, password: password });
   },
 
-  register: (username, password, name, email) => {
+  register: (email, userName, fullName, password) => {
     const url = "/user/register";
     return axiosClient.post(url, {
-      username: username,
+      username: userName,
       password: password,
-      name: name,
+      name: fullName,
       email: email,
     });
   },
 
-  updateProfile: (newName, newEmail) => {
+  updateProfile: (newName, newEmail, newUserName) => {
     const url = `/user/update`;
-    return axiosClient.post(url, {
+    return axiosClient.put(url, {
       newName: newName,
       newEmail: newEmail,
+      newUserName: newUserName,
     });
   },
 
@@ -79,6 +80,7 @@ const userApi = {
     const url = "/user/active";
     return axiosClient.post(url, { token: token });
   },
+
 };
 
 export default userApi;

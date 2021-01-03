@@ -12,9 +12,10 @@ import {
   TextField,
   Typography,
   makeStyles,
+  Snackbar,
   InputAdornment
 } from '@material-ui/core';
-
+import MuiAlert from '@material-ui/lab/Alert';
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonIcon from "@material-ui/icons/Person";
@@ -26,6 +27,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import PageTittle from '../../components/PageTittle';
 import loginBackGroundLeft from '../../library/images/loginBackgroundLeft.svg';
 import loginBackGroundRight from '../../library/images/loginBackgroundRight.svg';
+import userApi from "../../api/userApi";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,11 +80,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+
 const RegisterView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setError(null);
+  };
+
   return (
     <PageTittle
       className={classes.root}
@@ -94,15 +110,27 @@ const RegisterView = () => {
         height="100%"
         justifyContent="center"
       >
+
+        {error ? (
+          <Snackbar
+            open={true}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            autoHideDuration={3000}
+            onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              {error}
+            </Alert>
+          </Snackbar>
+        ) : null}
         <Container maxWidth="sm" className={classes.container}>
           <Formik
             initialValues={{
-              email: '',
-              userName: '',
-              fullName: '',
-              password: '',
-              confirmPassword: '',
-              policy: false
+              email: 'hanghuuthe1oab1@gmail.com',
+              userName: 'thehang',
+              fullName: 'FunRetro',
+              password: 'Thehang99!',
+              confirmPassword: 'Thehang99!',
+              policy: true
             }}
             validationSchema={
               Yup.object().shape({
@@ -120,10 +148,19 @@ const RegisterView = () => {
                 policy: Yup.boolean().oneOf([true], 'This field must be checked')
               })
             }
-            onSubmit={(values, { resetForm }) => {
-              alert(JSON.stringify(values));
-              navigate('/app/dashboard', { replace: true });
-              resetForm();
+            onSubmit={async (values, { resetForm }) => {
+              try {
+                const { email, userName, fullName, password } = values;
+                const response = await userApi.register(email, userName, fullName, password);
+                resetForm();
+                // navigate('/login', { replace: true });
+              } catch (err) {
+                if (err.response) {
+                  setError(err.response.data);
+                } else {
+                  setError("Server is closed");
+                }
+              }
             }}
           >
             {({

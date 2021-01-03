@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -18,6 +18,7 @@ import CupIcon from '../../../library/icon/CupIcon';
 import MatchIcon from '../../../library/icon/MatchIcon';
 import WinmatchIcon from '../../../library/icon/WinmatchIcon';
 import PercentWin from '../../../library/icon/PercentWin';
+import UserContext from '../../../contexts/UserContext';
 const user = {
   // avatar: '/static/images/avatars/avatar_6.png',
   jobTitle: 'Senior Developer',
@@ -67,7 +68,7 @@ const useStyles = makeStyles(() => ({
 const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
-
+  const { user } = useContext(UserContext);
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
@@ -90,7 +91,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
         <Avatar
           className={classes.avatar}
           component={RouterLink}
-          to="/app/account"
+          to="/profile"
         />
         <Typography
           className={classes.name}
@@ -103,7 +104,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           color="textSecondary"
           variant="body2"
         >
-          {user.jobTitle}
+          {user.isAdmin ? 'Admin' : 'User'}
         </Typography>
       </Box>
       <Divider />
@@ -163,12 +164,14 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
 NavBar.propTypes = {
   onMobileClose: PropTypes.func,
-  openMobile: PropTypes.bool
+  openMobile: PropTypes.bool,
+  data: PropTypes.object
 };
 
 NavBar.defaultProps = {
   onMobileClose: () => { },
-  openMobile: false
+  openMobile: false,
+  data: null
 };
 
 export default NavBar;

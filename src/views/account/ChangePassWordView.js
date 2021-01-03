@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import UserContext from '../../contexts/UserContext';
+import swal from 'sweetalert';
+import userApi from "../../api/userApi";
 import {
     Box,
     Button,
@@ -102,6 +105,9 @@ const RegisterView = () => {
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    // const { handleChangePassword, error, handleResetError } = useContext(UserContext);
+
+
     return (
         <PageTittle
             className={classes.root}
@@ -134,9 +140,42 @@ const RegisterView = () => {
                             })
                         }
                         onSubmit={(values, { resetForm }) => {
-                            alert(JSON.stringify(values));
-                            navigate('/app/dashboard', { replace: true });
-                            resetForm();
+                            swal({
+                                title: "Do you want to change password?",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: true,
+                            })
+                                .then(async (willDelete) => {
+                                    if (willDelete) {
+                                        try {
+                                            await userApi.changePassword(values.oldPassword, values.password);
+
+                                            await swal("Yeah! Your password has been changed!", {
+                                                icon: "success",
+                                                buttons: false,
+                                                timer: 1500,
+                                            });
+                                            resetForm();
+                                            navigate('/');
+
+                                        } catch (err) {
+
+                                            swal({
+                                                icon: "error",
+                                                title: "Opps !",
+                                                text: err.response.data,
+                                                buttons: false,
+                                                timer: 1500,
+                                            });
+                                            resetForm();
+                                        }
+                                    } else {
+                                        swal("Your password not change!", { icon: "warning", timer: 1000, buttons: false, });
+                                        resetForm();
+                                    }
+                                });
+
                         }}
                     >
                         {({
@@ -144,7 +183,6 @@ const RegisterView = () => {
                             handleBlur,
                             handleChange,
                             handleSubmit,
-                            isSubmitting,
                             touched,
                             values
                         }) => (
@@ -262,7 +300,6 @@ const RegisterView = () => {
                                 <Box my={2}>
                                     <Button
                                         color="primary"
-                                        disabled={isSubmitting}
                                         fullWidth
                                         size="large"
                                         type="submit"

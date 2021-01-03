@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import NavBar from './NavBar/index';
 import TopBar from './TopBar';
+
+import userApi from '../../api/userApi';
+import UserContext from '../../contexts/UserContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +41,19 @@ const DashboardLayout = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+  const { handleSaveUser } = useContext(UserContext);
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const fetchUser = await userApi.getProfile();
+        handleSaveUser(fetchUser);
+      } catch (err) {
+        console.log("header: Failed to get profile: ", err);
+      }
+    };
+    getProfile();
+  }, []);
+
   return (
     <div className={classes.root}>
       <TopBar

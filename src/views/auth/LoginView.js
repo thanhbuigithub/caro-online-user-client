@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link as RouterLink, useNavigate, Navigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
@@ -24,6 +24,11 @@ import PageTittle from '../../components/PageTittle';
 import LogoAuth from '../../components/LogoAuth';
 import loginBackGroundLeft from '../../library/images/loginBackgroundLeft.svg';
 import loginBackGroundRight from '../../library/images/loginBackgroundRight.svg';
+import auth from "../../components/common/router/auth";
+import userApi from "../../api/userApi";
+import CloseIcon from '@material-ui/icons/Close';
+import swal from 'sweetalert';
+import loading from '../../library/images/loading.gif';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -90,6 +95,7 @@ const useStyles = makeStyles((theme) => ({
 const LoginView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   return (
     <PageTittle
@@ -112,8 +118,39 @@ const LoginView = () => {
               userName: Yup.string().required('User name is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
+            onSubmit={async (values, { resetForm }) => {
+              try {
+                const { userName, password } = values;
+                const res = await userApi.login(userName, password);
+                resetForm();
+                setError('');
+                await swal({
+                  title: "Logging...",
+                  text: "Please wait",
+                  icon: "/static/loading.gif",
+                  button: false,
+                  timer: 1000,
+                  closeOnClickOutside: false,
+                  closeOnEsc: false
+                })
+                auth.setAccessToken(res, () => {
+                  navigate('/', { replace: true });
+                });
+              } catch (err) {
+                if (err.response) {
+                  setError(err.response.data);
+                  swal("Opps!", err.response.data, "error", {
+                    buttons: false,
+                    timer: 2000,
+                  });
+                } else {
+                  setError("Server is closed");
+                  swal("Opps!", "Server is closed", "error", {
+                    buttons: false,
+                    timer: 2000,
+                  });
+                }
+              }
             }}
           >
             {({
@@ -164,7 +201,7 @@ const LoginView = () => {
                   name="password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={values.password}
                   variant="outlined"
                   InputProps={{

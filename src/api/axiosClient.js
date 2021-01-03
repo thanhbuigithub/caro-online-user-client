@@ -6,7 +6,9 @@ import auth from "../components/common/router/auth";
 // Please have a look at here `https://github.com/axios/axios#request- config` for the full list of configs
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
+  // withCredentials: true,
   headers: {
+    "Access-Control-Allow-Origin": "*",
     "content-type": "application/json",
   },
   paramsSerializer: (params) => queryString.stringify(params),

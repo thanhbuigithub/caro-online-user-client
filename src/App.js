@@ -4,7 +4,10 @@ import GlobalStyles from './components/GlobalStyles';
 import theme from './theme';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { useRoutes } from 'react-router-dom';
-import routes from './routes';
+import routesProtected from './routes';
+import routesPublic from './routesPublic';
+import auth from './components/common/router/auth';
+
 // import Login from "./components/login";
 // import Active from "./components/active";
 // import Home from "./components/dashboard";
@@ -17,7 +20,7 @@ import routes from './routes';
 // import Register from "./components/register";
 
 // const guestRoutes = [
-//   { path: "/login", element: Login },
+//   { path: "/login", component: Login },
 //   { path: "/user/active/:token", component: Active, exact: true },
 //   { path: "/register", component: Register, exact: true },
 //   { path: "/forgot_password", component: FogotPassWord, exact: true },
@@ -30,13 +33,17 @@ import routes from './routes';
 // ];
 
 function App() {
-  const routelist = useRoutes(routes);
+  const routelistProtected = useRoutes(routesProtected);
+  const routelistPublic = useRoutes(routesPublic);
+  let isAuthenticated = auth.isAuthenticated();
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      {/* <BrowserRouter>
-        <Routes> */}
-      {routelist}
+      {/* <BrowserRouter> */}
+      {/* <Routes> */}
+      {isAuthenticated ? routelistProtected : routelistPublic}
+      {/* {routelist} */}
       {/* {guestRoutes.map((route, key) => {
             return (
               <GuestRoute
@@ -46,8 +53,8 @@ function App() {
                 key={key}
               />
             );
-          })} */}
-      {/* {protectedRoutes.map((route, key) => {
+          })}
+          {protectedRoutes.map((route, key) => {
             return (
               <ProtectedRoute
                 exact={route.exact}

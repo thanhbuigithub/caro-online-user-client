@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -26,7 +26,8 @@ import PersonIcon from '@material-ui/icons/Person';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Logo from '../../components/Logo';
-
+import auth from '../../components/common/router/auth';
+import UserContext from '../../contexts/UserContext';
 const StyledMenu = withStyles({
   paper: {
     border: "2px solid #d3d4d5",
@@ -90,12 +91,14 @@ const useStyles = makeStyles((theme) => ({
 
 const TopBar = ({
   className,
+  data,
   onMobileNavOpen,
   ...rest
 }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
+  const { user } = useContext(UserContext);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -119,7 +122,7 @@ const TopBar = ({
           onClick={handleClick}
           className={classes.button}>
           <Typography align="left" variant="subtitle1" style={{ textTransform: 'capitalize' }}>Hi,&nbsp;
-          <Typography variant="overline" style={{ textTransform: 'none' }}>user</Typography>
+          <Typography variant="overline" style={{ textTransform: 'none' }}>{user.name}</Typography>
           </Typography>
           <Avatar className={classes.avatar}>
             <InputIcon />
@@ -144,7 +147,11 @@ const TopBar = ({
             </ListItemIcon>
             <ListItemText primary="Change Password" />
           </StyledMenuItem>
-          <StyledMenuItem>
+          <StyledMenuItem onClick={() => {
+            auth.logout(() => {
+              navigate('/login');
+            });
+          }}>
             <ListItemIcon>
               <ExitToAppIcon fontSize="small" />
             </ListItemIcon>
@@ -187,7 +194,7 @@ const TopBar = ({
 
 TopBar.propTypes = {
   className: PropTypes.string,
-  onMobileNavOpen: PropTypes.func
+  onMobileNavOpen: PropTypes.func,
 };
 
 export default TopBar;

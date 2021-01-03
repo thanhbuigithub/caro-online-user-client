@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-// import { Doughnut } from 'react-chartjs-2';
 import {
   List,
   ListItem,
@@ -28,9 +27,11 @@ import PersonIcon from '@material-ui/icons/Person';
 import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import cartouche from '../../library/images/cartouche2.png';
+import cartouche from '../../../library/images/cartouche2.png';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import StatisticalIcon from '../../library/icon/StatisticalIcon'
+import StatisticalIcon from '../../../library/icon/StatisticalIcon'
+import UserContext from '../../../contexts/UserContext';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%'
@@ -109,11 +110,11 @@ const StyledListItem = withStyles((theme) => ({
   }
 }))(ListItem);
 
-const OnlineList = ({ className, ...rest }) => {
+const OnlineList = ({ className, data, ...rest }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(Array(4).fill(false));
-
+  const { listUserOnline } = useContext(UserContext);
   const handleClick = (indexItem) => {
     const changeArray = open.map((item, index) => index === indexItem ? item = !item : item = false);
     setOpen(changeArray);
@@ -153,9 +154,9 @@ const OnlineList = ({ className, ...rest }) => {
           overflow="auto"
         >
           <List className={classes.list}>
-            {[1, 2, 3, 4, 5, 6].map((item, index) => {
+            {listUserOnline.map((user, index) => {
               return (
-                <React.Fragment key={index}>
+                <React.Fragment key={user.id}>
                   <StyledListItem button onClick={() => { handleClick(index) }}>
                     <ListItemIcon>
                       <StyledBadge
@@ -172,7 +173,7 @@ const OnlineList = ({ className, ...rest }) => {
                         </Avatar>
                       </StyledBadge>
                     </ListItemIcon>
-                    <ListItemText primary="User 1" />
+                    <ListItemText primary={user.username} />
                     {open[index] ? <ExpandLess /> : <ExpandMore />}
                   </StyledListItem>
                   <Collapse in={open[index]} timeout="auto" unmountOnExit>

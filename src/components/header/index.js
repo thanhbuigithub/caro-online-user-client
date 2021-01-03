@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import Auth from "../common/router/auth";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
@@ -186,7 +185,7 @@ function Header({ isSocialLogin }) {
   const handleLogout = () => {
     handleMenuClose();
     socketManager.closeSocket();
-    Auth.logout(() => {
+    auth.logout(() => {
       history.push("/login");
     });
   };

@@ -79,9 +79,10 @@ function Login() {
   if (token) {
     auth.setAccessToken(token, () => {
       localStorage.setItem('isSocial', true);
-      history.push({
-        pathname: '/',
-      });
+      // history.push({
+      //   pathname: '/',
+      // });
+      history('/', { replace: true });
     });
   }
 
@@ -99,7 +100,7 @@ function Login() {
       const res = await userApi.login(username, password);
       auth.setAccessToken(res, () => {
         setFetching(false);
-        history.push("/");
+        history('/', { replace: true });
       });
     } catch (err) {
       console.log(err.response);
@@ -129,12 +130,12 @@ function Login() {
         response.accessToken
       );
       auth.setAccessToken(res);
-      history.push("/");
+      history('/', { replace: true });
     } catch (err) {
       console.log(err.response);
       if (!err.response) setError("Server is closed");
       else setError(err.response.data);
-      history.push("/login");
+      history('/login');
     }
   };
 
