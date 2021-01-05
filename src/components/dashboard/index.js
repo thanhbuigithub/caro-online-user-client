@@ -15,11 +15,53 @@ import Container from "@material-ui/core/Container";
 import AddGameButton from "../game/AddGameButton";
 import JoinGameButton from "../game/JoinGameButton";
 import UserContext from "../../contexts/UserContext";
+import GameContext from "../../contexts/GameContext";
+import SocketManager from "../../socketio/SocketManager";
+import Auth from "../common/router/auth";
 
 function Home() {
   const classes = useStyles();
   let history = useHistory();
-  const { listUserOnline } = useContext(UserContext);
+  const { listUserOnline, setListUserOnline } = useContext(UserContext);
+  const { init } = useContext(GameContext);
+  const socket = SocketManager.getSocket();
+  // const { setListUserOnline } = useContext(UserContext);
+
+  // useEffect(() => {
+  //   const user = Auth.getCurrentUser();
+  //   console.log(socket);
+  //   socket.emit("join", user._id);
+  //   // return () => {
+  //   //   socketManager.closeSocket();
+  //   // };
+  // }, []);
+
+  useEffect(() => {
+    socket.on("new-connect", (list_user_online) => {
+      console.log("New Connect");
+      setListUserOnline(list_user_online);
+    });
+    return () => {
+      socket.off("new-connect");
+    };
+  }, [setListUserOnline]);
+
+  useEffect(() => {
+    socket.on("join-room-successful", (room) => {
+      history.push(`/game/${room.id}`);
+    });
+
+    socket.on("create-room-successful", (room) => {
+      history.push(`/game/${room.id}`);
+      init(room);
+      console.log(room);
+    });
+
+    return () => {
+      socket.off("join-room-successful");
+      socket.off("create-room-successful");
+    };
+  }, [init]);
 
   function generate(element) {
     return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((value) =>

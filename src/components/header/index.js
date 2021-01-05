@@ -49,23 +49,15 @@ function Header({}) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [error, setError] = useState("");
-
   const { setListUserOnline } = useContext(UserContext);
-
   const [user, setUser] = useState({});
   let history = useHistory();
+  const socket = socketManager.getSocket();
 
   useEffect(() => {
-    const token = Auth.getAccessToken();
-    const user = jwt_decode(token);
-    console.log(user, token);
-    let socket = socketManager.getSocket();
+    const user = Auth.getCurrentUser();
+    console.log(socket);
     socket.emit("join", user._id);
-    socket.on("new-connect", (list_user_online) => {
-      console.log("New Connect");
-      setListUserOnline(list_user_online);
-    });
-
     // return () => {
     //   socketManager.closeSocket();
     // };

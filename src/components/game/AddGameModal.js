@@ -13,9 +13,9 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import SocketManager from "../../socketio/SocketManager";
 import { useHistory } from "react-router-dom";
 import GameContext from "../../contexts/GameContext";
+import SocketManager from "../../socketio/SocketManager";
 
 const theme = createMuiTheme({
   palette: {
@@ -107,19 +107,11 @@ export default function AddBoardModal({ handleToggleModal, onAddBoard }) {
     socket.emit("create-room");
   };
 
-  useEffect(() => {
-    socket.on("create-room-successful", (room) => {
-      history.push(`/game/${room.id}`);
-      init(room);
-      console.log(room);
-    });
-  }, []);
-
   return (
     <div>
       <Dialog
         onClose={handleToggleModal}
-        aria-labelledby="customized-dialog-title"
+        aria-label="customized-dialog-title"
         open={true}
       >
         <DialogTitle

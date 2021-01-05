@@ -104,14 +104,6 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
     socket.emit("join-room", id);
   };
 
-  useEffect(() => {
-    socket.on("join-room-successful", (room) => {
-      history.push(`/game/${room.id}`);
-      init(room);
-      console.log(room);
-    });
-  }, []);
-
   return (
     <div>
       <Dialog

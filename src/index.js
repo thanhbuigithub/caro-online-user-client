@@ -4,11 +4,14 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import UserProvider from "./provider/UserProvider";
+import GameProvider from "./provider/GameProvider";
 
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
-      <App />
+      <GameProvider>
+        <App />
+      </GameProvider>
     </UserProvider>
   </React.StrictMode>,
   document.getElementById("root")
