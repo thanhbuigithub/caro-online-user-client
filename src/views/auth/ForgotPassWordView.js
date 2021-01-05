@@ -14,7 +14,8 @@ import {
 import EmailIcon from "@material-ui/icons/Email";
 import PageTittle from '../../components/PageTittle';
 import forgotPassword from '../../library/images/forgotPassword.svg';
-
+import userApi from "../../api/userApi";
+import swal from 'sweetalert';
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.dark,
@@ -108,10 +109,23 @@ const ForgotPassWordView = () => {
                                 email: Yup.string().email('Email must be valid').max(255).required('Email is required'),
                             })
                         }
-                        onSubmit={(values, { resetForm }) => {
-                            alert(JSON.stringify(values));
-                            navigate('/app/dashboard', { replace: true });
-                            resetForm();
+                        onSubmit={async (values, { resetForm }) => {
+                            try {
+                                const res = await userApi.forgotPassword(values.email);
+                                console.log(res);
+                                await swal('Hola !', res.message, 'success', { timer: 2000 });
+                                resetForm();
+                            } catch (err) {
+                                await swal({
+                                    title: 'Opps!',
+                                    text: err.response.data,
+                                    icon: 'error',
+                                    buttons: false,
+                                    timer: 2000,
+                                });
+                                resetForm();
+                            }
+
                         }}
                     >
                         {({

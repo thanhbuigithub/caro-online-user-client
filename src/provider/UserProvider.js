@@ -7,6 +7,7 @@ import config from "../config/Config";
 export default (props) => {
   const [listUserOnline, setListUserOnline] = useState([]);
   const [user, setUser] = useState({
+    id: '',
     name: "",
     username: "",
     email: "",
@@ -14,21 +15,33 @@ export default (props) => {
     isAdmin: false,
   });
   const [error, setError] = useState('');
-  const { name, username, email, date, isAdmin } = user;
+  const [isUploadAvatar, setIsUploadAvatar] = useState(false);
+  const [avatar, setAvatar] = useState(null);
 
 
+  const { id, name, username, email, date, isAdmin } = user;
+
+  const handleIsUploadAvatar = (value) => {
+    setIsUploadAvatar(value);
+  }
   const handleResetError = () => {
     setError('');
   }
 
   const handleSaveUser = (fetchUser) => {
     setUser({
+      ...user,
+      id: fetchUser.id,
       name: fetchUser.name,
       username: fetchUser.username,
       email: fetchUser.email,
       isAdmin: fetchUser.isAdmin,
       date: fetchUser.date,
     })
+  }
+
+  const handleSaveAvatar = (avatarUser) => {
+    setAvatar(`${process.env.REACT_APP_ENDPOINT}/api/image/avatar/${avatarUser}`);
   }
 
   const handleChangeProfile = async (newName, newEmail, newUserName) => {
@@ -49,9 +62,7 @@ export default (props) => {
     }
   }
 
-  const handleUpdateImage = () => {
 
-  }
   const handleChangePassword = async (oldPassword, newPassword) => {
     try {
       await userApi.changePassword(oldPassword, newPassword);
@@ -68,10 +79,14 @@ export default (props) => {
         listUserOnline,
         user,
         error,
+        isUploadAvatar,
+        id,
+        avatar,
+        handleSaveAvatar,
+        handleIsUploadAvatar,
         handleResetError,
         handleSaveUser,
         setListUserOnline,
-        handleUpdateImage,
         handleChangeProfile,
         handleChangePassword
       }}

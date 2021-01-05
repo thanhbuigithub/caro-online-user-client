@@ -1,14 +1,16 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, createRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import UserContext from '../../../contexts/UserContext';
 import EventIcon from '@material-ui/icons/Event';
-import Grid from "@material-ui/core/grid";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
+import userApi from "../../../api/userApi";
 import {
   Avatar,
   Box,
   Button,
+  Grid,
   Card,
   CardActions,
   CardContent,
@@ -26,20 +28,70 @@ import {
 //   timezone: 'GTM-7'
 // };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   avatar: {
-    height: 100,
-    width: 100
+    width: theme.spacing(7),
+    height: theme.spacing(7),
   }
 }));
 
 const Profile = ({ className, ...rest }) => {
   const classes = useStyles();
-  const { user } = useContext(UserContext);
+  const inputFileRef = createRef(null);
+  const { user, avatar, handleIsUploadAvatar, handleSaveAvatar } = useContext(UserContext);
   const date = new Date(user.date);
   const dateText = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
   const timeText = moment(date).format('HH:mm:ss');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [isUpload, setIsUpload] = useState(false);
+  const handleResetImage = () => {
+    URL.revokeObjectURL(selectedFile);
+    inputFileRef.current.value = null;
+  };
+
+
+
+  const handleSetImage = (newImage) => {
+    if (selectedFile) {
+      handleResetImage();
+    }
+    else {
+      setSelectedFile(newImage);
+    }
+
+  }
+
+  const handleChangeImage = (event) => {
+    event.preventDefault();
+    const newImage = event.target?.files?.[0];
+    if (newImage) {
+      setIsUpload(true);
+      handleSetImage(URL.createObjectURL(newImage));
+      setUploadedImage(newImage);
+    }
+  }
+  const handleUploadImage = async () => {
+    if (selectedFile) {
+      let formData = new FormData();
+      formData.append('caption', user.id);
+      formData.append('file', uploadedImage);
+      // const object = {};
+      // formData.forEach((value, key) => object[key] = value);
+      // const data = JSON.stringify(object);
+      // console.log(object);
+      try {
+        const uploadImage = await userApi.uploadAvatar(formData);
+        await handleSaveAvatar(uploadImage.image.filename);
+        setIsUpload(false);
+
+      } catch (err) {
+        console.log(err.response)
+      }
+
+    }
+  }
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -52,8 +104,9 @@ const Profile = ({ className, ...rest }) => {
           flexDirection="column"
         >
           <Avatar
+            variant="circle"
             className={classes.avatar}
-            src="/static/logo.svg"
+            src={selectedFile || avatar || '/static/unknown_avatar.jpg'}
           />
           <Typography
             color="textPrimary"
@@ -69,7 +122,7 @@ const Profile = ({ className, ...rest }) => {
             {user.isAdmin ? 'Admin' : 'User'}
           </Typography>
           <Grid container justify="space-between" >
-            <Grid item xs={12} md={6}  >
+            <Grid item xs={12} md={6} sm={6} >
               <Box display="flex">
                 <EventIcon color='secondary' />
                 <Typography
@@ -90,7 +143,7 @@ const Profile = ({ className, ...rest }) => {
                 {dateText}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={6} >
+            <Grid item xs={12} md={6} sm={6}>
               <Box display="flex" justifyContent="flex-end">
                 <EventIcon color='secondary' />
                 <Typography
@@ -120,13 +173,48 @@ const Profile = ({ className, ...rest }) => {
       </CardContent>
       <Divider />
       <CardActions>
-        <Button
+        {/* <Button
           color="primary"
           fullWidth
           variant="text"
         >
           Upload picture
-        </Button>
+
+        </Button> */}
+        {isUpload ? (<Button
+          fullWidth
+          onClick={handleUploadImage}
+          style={{ display: 'hidden' }}
+          variant="contained"
+          component="span"
+          color="secondary"
+          startIcon={<CloudUploadIcon />}
+        >
+          Submit file
+        </Button>) : (
+            <>
+              <input
+                // accept="image/*"
+                ref={inputFileRef}
+                accept=".png, .jpg, .jpeg, .svg"
+                style={{ display: 'none' }}
+                id="raised-button-file"
+                type="file"
+                onChange={handleChangeImage}
+              />
+              <label htmlFor="raised-button-file" style={{ width: '100%' }}>
+                <Button
+                  variant="contained"
+                  component="span"
+                  color="secondary"
+                  onClick={handleUploadImage}
+                  fullWidth>
+                  Upload picture
+                   </Button>
+              </label>
+            </>
+          )}
+
       </CardActions>
     </Card>
   );

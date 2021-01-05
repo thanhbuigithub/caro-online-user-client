@@ -25,6 +25,21 @@ const userApi = {
     });
   },
 
+  loadAvatar: (filename) => {
+    const url = `/image/avatar/${filename}`;
+    return axiosClient.get(url);
+  },
+
+  getAvatar: (filename) => {
+    const url = `/image/get/${filename}`;
+    return axiosClient.get(url);
+  },
+
+  uploadAvatar: (data) => {
+    const url = "/image";
+    return axiosClient.post(url, data);
+  },
+
   getProfile: () => {
     const url = `/user/profile`;
     return axiosClient.get(url);
@@ -37,12 +52,14 @@ const userApi = {
       newPassword: newPassword
     });
   },
+
   forgotPassword: (email) => {
     const url = `/user/forgot_password`;
     return axiosClient.post(url, {
       email: email,
     });
   },
+
   resetPassword: (new_password, reset_password_link) => {
     const url = `/user/reset_password`;
     return axiosClient.put(url, {
@@ -80,7 +97,6 @@ const userApi = {
     const url = "/user/active";
     return axiosClient.post(url, { token: token });
   },
-
 };
 
 export default userApi;

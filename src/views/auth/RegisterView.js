@@ -15,7 +15,6 @@ import {
   Snackbar,
   InputAdornment
 } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonIcon from "@material-ui/icons/Person";
@@ -28,7 +27,7 @@ import PageTittle from '../../components/PageTittle';
 import loginBackGroundLeft from '../../library/images/loginBackgroundLeft.svg';
 import loginBackGroundRight from '../../library/images/loginBackgroundRight.svg';
 import userApi from "../../api/userApi";
-
+import swal from 'sweetalert';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -80,24 +79,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 
 const RegisterView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setError(null);
-  };
 
   return (
     <PageTittle
@@ -110,26 +99,14 @@ const RegisterView = () => {
         height="100%"
         justifyContent="center"
       >
-
-        {error ? (
-          <Snackbar
-            open={true}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            autoHideDuration={3000}
-            onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-              {error}
-            </Alert>
-          </Snackbar>
-        ) : null}
         <Container maxWidth="sm" className={classes.container}>
           <Formik
             initialValues={{
-              email: 'hanghuuthe1oab1@gmail.com',
-              userName: 'thehang',
-              fullName: 'FunRetro',
-              password: 'Thehang99!',
-              confirmPassword: 'Thehang99!',
+              email: '',
+              userName: '',
+              fullName: '',
+              password: '',
+              confirmPassword: '',
               policy: true
             }}
             validationSchema={
@@ -151,14 +128,40 @@ const RegisterView = () => {
             onSubmit={async (values, { resetForm }) => {
               try {
                 const { email, userName, fullName, password } = values;
-                const response = await userApi.register(email, userName, fullName, password);
+                const fetchUser = await userApi.register(email, userName, fullName, password);
+                await swal({
+                  title: "Registering...",
+                  text: "Please wait",
+                  icon: "/static/loading.gif",
+                  button: false,
+                  timer: 1000,
+                  closeOnClickOutside: false,
+                  closeOnEsc: false
+                })
+                await swal({
+                  title: "Info !",
+                  icon: "info",
+                  text: fetchUser.message,
+                  button: false,
+                  timer: 3000,
+                })
                 resetForm();
+                // swal('Info !', fetchUser, 'info', { timer: 2000 });
+
+                // resetForm();
                 // navigate('/login', { replace: true });
               } catch (err) {
                 if (err.response) {
-                  setError(err.response.data);
+                  console.log(err.response);
+                  swal("Opps!", err.response.data, "error", {
+                    buttons: false,
+                    timer: 2000,
+                  });
                 } else {
-                  setError("Server is closed");
+                  swal("Opps!", "Server is closed", "error", {
+                    buttons: false,
+                    timer: 2000,
+                  });
                 }
               }
             }}

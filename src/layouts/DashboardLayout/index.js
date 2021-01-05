@@ -41,18 +41,50 @@ const DashboardLayout = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
-  const { handleSaveUser } = useContext(UserContext);
+  const { handleSaveUser, isUploadAvatar, handleIsUploadAvatar, id, avatar, handleSaveAvatar } = useContext(UserContext);
   useEffect(() => {
     const getProfile = async () => {
       try {
         const fetchUser = await userApi.getProfile();
-        handleSaveUser(fetchUser);
+        await handleSaveUser(fetchUser);
       } catch (err) {
         console.log("header: Failed to get profile: ", err);
       }
     };
     getProfile();
+
   }, []);
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      try {
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          handleSaveAvatar(fetchUser.path);
+        }
+      } catch (err) {
+
+      }
+    };
+    getAvatar();
+
+  });
+
+  // useEffect(() => {
+  //   const fetchAvatar = async () => {
+  //     try {
+  //       const avatarUser = await userApi.loadAvatar(id);
+  //       handleSaveAvatar(avatarUser);
+  //       console.log(avatarUser);
+  //       handleIsUploadAvatar(false);
+  //     } catch (err) {
+  //       console.log("Error: ", err.response);
+  //     }
+  //   };
+  //   if (isUploadAvatar) {
+  //     return fetchAvatar();
+  //   }
+  // }, []);
 
   return (
     <div className={classes.root}>

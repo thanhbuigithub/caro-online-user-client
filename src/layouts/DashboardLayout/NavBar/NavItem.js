@@ -69,7 +69,7 @@ const NavItem = ({
         {...rest}
       >
         <ListItemAvatar >
-          <Avatar className={classes.startAvatar}>
+          <Avatar variant="circle" className={classes.startAvatar}>
             {Icon && (
               <Icon />
             )}

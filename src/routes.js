@@ -17,7 +17,7 @@ import FogotPassWordView from "./views/auth/ForgotPassWordView";
 import ActiveAccountView from './views/auth/ActiveAccountView';
 import ResetPassWordView from './views/auth/ResetPassWordView';
 import Profile from './views/account/AccountView';
-import ChangePassWordView from './views/account/ChangePassWordView';
+
 import Home from "./views/dashboard";
 import Test from './components/header';
 import NotFoundView from './views/errors/NotFoundView';
@@ -57,20 +57,13 @@ const routes = [
             { path: '/login', element: <Navigate to="/" /> },
             { path: '/register', element: <Navigate to="/" /> },
             { path: '/forgot_password', element: <Navigate to="/" /> },
-            { path: "/user/active/:token", element: <Navigate to="/" /> },
-            { path: "/reset_password/:token", element: <ResetPassWordView /> },
+            { path: "/active/:token", element: <Navigate to="/" /> },
+            { path: "/reset_password/:token", element: <Navigate to="/" /> },
             { path: "/profile", element: <Profile /> },
-            { path: "/change_password", element: <ChangePassWordView /> },
+            { path: "/change_password", element: <Navigate to="/" /> },
             { path: '/404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> },
             { path: '/test', element: <Test /> },
-            // { path: 'register', element: <RegisterView /> },
-            // { path: '/user/active/:token', element: <ActiveView /> },
-            // { path: "/forgot_password", element: <FogotPassWordView /> },
-            // { path: "/reset_password/:token", element: <ResetPassWordView /> },
-            // { path: "/game/:id", element:isAuthenticated ? <GameView/>:<Navigate to="/login"/> },
-            // { path: '404', element: <NotFoundView /> },
-            // { path: '*', element: <Navigate to="/404" /> },
 
         ]
     },

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link as RouterLink, useNavigate, Navigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, Navigate, useParams, useLocation } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
@@ -28,7 +28,7 @@ import auth from "../../components/common/router/auth";
 import userApi from "../../api/userApi";
 import CloseIcon from '@material-ui/icons/Close';
 import swal from 'sweetalert';
-import loading from '../../library/images/loading.gif';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -92,11 +92,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
+
 const LoginView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const location = useLocation();
+
+  function useQuery() {
+    return new URLSearchParams(location.search);
+  }
+  let query = useQuery();
+
+  useEffect(() => {
+
+    const isSocialLogin = async () => {
+      try {
+        const token = query.get('token');
+        if (token) {
+          auth.setAccessToken(token, () => {
+            navigate('/', { replace: true });
+          })
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    isSocialLogin();
+  }, [])
   return (
     <PageTittle
       className={classes.root}
@@ -277,7 +302,7 @@ const LoginView = () => {
                       color="primary"
                       fullWidth
                       startIcon={<FacebookIcon />}
-                      onClick={handleSubmit}
+                      href={`${process.env.REACT_APP_API_URL}/user/login/facebook`}
                       size="large"
                       variant="contained"
                     >
@@ -292,7 +317,7 @@ const LoginView = () => {
                     <Button
                       fullWidth
                       startIcon={<GoogleIcon />}
-                      onClick={handleSubmit}
+                      href={`${process.env.REACT_APP_API_URL}/user/login/google`}
                       size="large"
                       variant="contained"
                     >

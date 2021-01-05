@@ -68,7 +68,7 @@ const useStyles = makeStyles(() => ({
 const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
-  const { user } = useContext(UserContext);
+  const { user, avatar } = useContext(UserContext);
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
@@ -92,6 +92,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           className={classes.avatar}
           component={RouterLink}
           to="/profile"
+          src={avatar}
         />
         <Typography
           className={classes.name}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
@@ -13,7 +13,9 @@ import {
 } from '@material-ui/core';
 import PageTittle from '../../components/PageTittle';
 import authentication from '../../library/images/authentication.svg';
-
+import userApi from "../../api/userApi";
+import swal from 'sweetalert';
+import auth from '../../components/common/router/auth';
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.dark,
@@ -89,6 +91,26 @@ const useStyles = makeStyles((theme) => ({
 const ActiveAccountView = () => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const token = useParams();
+
+    useEffect(() => {
+        const verifyAccount = async () => {
+            try {
+                const res = await userApi.active(token);
+                await swal('Hola !', 'You have been registered successfully!', 'success', { timer: 2000 });
+            } catch (err) {
+                await swal({
+                    title: 'Opps!',
+                    text: err.response.data,
+                    icon: 'error',
+                    buttons: false,
+                    timer: 2000,
+                });
+            }
+        };
+        verifyAccount();
+    }, []);
+
     return (
         <PageTittle
             className={classes.root}

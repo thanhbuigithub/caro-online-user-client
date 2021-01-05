@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
@@ -26,7 +26,8 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import PageTittle from '../../components/PageTittle';
 import loginBackGroundLeft from '../../library/images/loginBackgroundLeft.svg';
 import loginBackGroundRight from '../../library/images/loginBackgroundRight.svg';
-
+import userApi from "../../api/userApi";
+import swal from 'sweetalert';
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.dark,
@@ -99,6 +100,7 @@ const useStyles = makeStyles((theme) => ({
 const RegisterView = () => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const token = useParams();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     return (
@@ -130,10 +132,22 @@ const RegisterView = () => {
                                 confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Confirm password not matched').required('Confirm password is required'),
                             })
                         }
-                        onSubmit={(values, { resetForm }) => {
-                            alert(JSON.stringify(values));
-                            navigate('/app/dashboard', { replace: true });
-                            resetForm();
+                        onSubmit={async (values, { resetForm }) => {
+                            try {
+                                const res = await userApi.resetPassword(values.password, token);
+                                await swal('Hola !', res.message, 'success', { timer: 2000 });
+                                navigate('/login', { replace: true });
+                            } catch (err) {
+                                await swal({
+                                    title: 'Opps!',
+                                    text: err.response.data,
+                                    icon: 'error',
+                                    buttons: false,
+                                    timer: 2000,
+                                });
+                                resetForm();
+                            }
+
                         }}
                     >
                         {({

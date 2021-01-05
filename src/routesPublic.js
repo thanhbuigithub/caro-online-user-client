@@ -17,7 +17,7 @@ import ActiveAccountView from './views/auth/ActiveAccountView';
 import ResetPassWordView from './views/auth/ResetPassWordView';
 import Test from './components/header';
 import NotFoundView from './views/errors/NotFoundView';
-
+import ChangePassWordView from './views/account/ChangePassWordView';
 
 const routes = [
     {
@@ -28,10 +28,10 @@ const routes = [
             { path: '/login', element: <LoginView /> },
             { path: '/register', element: <RegisterView /> },
             { path: '/forgot_password', element: <FogotPassWordView /> },
-            { path: "/user/active/:token", element: <ActiveAccountView /> },
+            { path: "/active/:token", element: <ActiveAccountView /> },
             { path: "/reset_password/:token", element: <ResetPassWordView /> },
             { path: "/profile", element: <Navigate to="/login" /> },
-            { path: "/change_password", element: <Navigate to="/login" /> },
+            { path: "/change_password", element: <ChangePassWordView /> },
             { path: '/404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> },
             { path: '/test', element: <Test /> },
