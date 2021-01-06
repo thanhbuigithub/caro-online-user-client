@@ -7,7 +7,7 @@ import config from "../config/Config";
 export default (props) => {
   const [listUserOnline, setListUserOnline] = useState([]);
   const [user, setUser] = useState({
-    id: '',
+    _id: '',
     name: "",
     username: "",
     email: "",
@@ -16,10 +16,10 @@ export default (props) => {
   });
   const [error, setError] = useState('');
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState('/static/unknown_avatar.jpg');
 
 
-  const { id, name, username, email, date, isAdmin } = user;
+  const { _id, name, username, email, date, isAdmin } = user;
 
   const handleIsUploadAvatar = (value) => {
     setIsUploadAvatar(value);
@@ -31,7 +31,7 @@ export default (props) => {
   const handleSaveUser = (fetchUser) => {
     setUser({
       ...user,
-      id: fetchUser.id,
+      _id: fetchUser._id,
       name: fetchUser.name,
       username: fetchUser.username,
       email: fetchUser.email,
@@ -80,7 +80,7 @@ export default (props) => {
         user,
         error,
         isUploadAvatar,
-        id,
+        _id,
         avatar,
         handleSaveAvatar,
         handleIsUploadAvatar,

@@ -3,9 +3,10 @@ import { green } from '@material-ui/core/colors';
 
 export default makeStyles((theme) => ({
     root: {
-        padding: theme.spacing(2),
-        flexGrow: 1,
-        overflow: 'hidden',
+        backgroundColor: theme.palette.background.dark,
+        minHeight: '100%',
+        paddingBottom: theme.spacing(3),
+        paddingTop: theme.spacing(3)
     },
     paper: {
         width: '100%',

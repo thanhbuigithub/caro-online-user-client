@@ -5,34 +5,63 @@ import Cell from "../cell";
 import GameContext from "../../../contexts/GameContext";
 import Config from "../../../config/Config";
 import SocketManager from "../../../socketio/SocketManager";
+import Button from "@material-ui/core/Button";
 //-------------- Board --------------
 
 function Board({}) {
-  const { history, stepNumber, handleClick } = useContext(GameContext);
-  const cells = history[stepNumber].cells;
+  const { board, moveHandler, isReady, isStarted } = useContext(GameContext);
   const cellsDiv = [];
   const socket = SocketManager.getSocket();
 
   useEffect(() => {
-    socket.on("move", ({ row, col }) => {
-      console.log(`Socket: on: move ${row} ${col}`);
-      handleClick(row, col);
+    socket.on("new-move", (move) => {
+      console.log(`Socket: on: move ${move.x} ${move.y}`);
+      moveHandler(move);
     });
 
     return () => {
-      socket.off();
+      socket.off("new-move");
     };
-  }, [cells]);
+  }, [moveHandler, board]);
 
-  for (let i = 0; i < cells.length; i += 1) {
-    for (let j = 0; j < cells[i].length; j += 1) {
+  const onClickReady = function () {
+    socket.emit("ready");
+  };
+
+  for (let i = 0; i < board.length; i += 1) {
+    for (let j = 0; j < board[i].length; j += 1) {
       const key = i * Config.boardSize.col + j;
 
-      cellsDiv.push(<Cell value={cells[i][j]} row={i} col={j} key={key} />);
+      cellsDiv.push(<Cell value={board[i][j]} row={i} col={j} key={key} />);
     }
   }
 
-  return <div className="board">{cellsDiv}</div>;
+  const readyModal = function () {
+    if (isStarted()) return null;
+    return (
+      <div className="ready-modal">
+        {isReady() ? (
+          <span>Waiting for another player...</span>
+        ) : (
+          <Button
+            variant="contained"
+            color="default"
+            elevation={3}
+            onClick={onClickReady}
+          >
+            Sẵn sàng
+          </Button>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="board">
+      {cellsDiv}
+      {readyModal()}
+    </div>
+  );
 }
 
 export default Board;

@@ -1,244 +1,257 @@
-import React from "react";
-import { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import GameContext from "../contexts/GameContext";
 import config from "../config/Config";
+import Auth from "../components/common/router/auth";
 
 const GameProvider = (props) => {
-  const [history, setHistory] = useState([
-    {
-      x: null,
-      y: null,
-      cells: Array(config.boardSize.row)
+  const [board, setBoard] = useState(
+    Array(config.boardSize.row)
+      .fill(null)
+      .map(() => {
+        return Array(config.boardSize.col).fill(null);
+      })
+  );
+
+  const [history, setHistory] = useState([]);
+
+  const [turn, setTurn] = useState(config.playerX);
+  const [winLine, setWinLine] = useState(null);
+  const [roomId, setRoomId] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [playerX, setPlayerX] = useState(null);
+  const [playerO, setPlayerO] = useState(null);
+  const [playerXReady, setPlayerXReady] = useState(false);
+  const [playerOReady, setPlayerOReady] = useState(false);
+  const [state, setState] = useState(config.GAME_STATE.UNREADY);
+  const [preMove, setPreMove] = useState(null);
+  const [currentTick, setCurrentTick] = useState(0);
+  const [turnTimeLimit, setTurnTimeLimit] = useState(config.TURN_TIME_LIMIT);
+  const [startedTurnTime, setStartedTurnTime] = useState(null);
+
+  let timer = null;
+
+  function init(room) {
+    setRoomId(room.id);
+    setPlayers(room.players);
+    setPlayerX(room.playerX);
+    setPlayerO(room.playerO);
+    setPlayerXReady(room.playerXReady);
+    setPlayerOReady(room.playerOReady);
+    setState(room.state);
+    setChatHistory(room.chatHistory);
+    setTurnTimeLimit(room.turnTimeLimit);
+
+    const newBoard = Array(config.boardSize.row)
+      .fill(null)
+      .map(() => {
+        return Array(config.boardSize.col).fill(null);
+      });
+
+    let newHistory = [];
+
+    let newTurn = config.playerX;
+    let newPreMove = null;
+    let newStartedTurnTime = null;
+    let newCurrentTick = 0;
+    let newWinLine = null;
+
+    if (room.game !== null) {
+      newHistory = room.game.history;
+      newTurn = room.game.turn;
+      newPreMove = room.game.preMove;
+      if (room.state === config.GAME_STATE.STARTED) {
+        newStartedTurnTime =
+          room.game.startedTurnTime - (room.game.currentTime - Date.now());
+        const curTick = Math.ceil((Date.now() - newStartedTurnTime) / 1000);
+        //console.log(curTick);
+        newCurrentTick = turnTimeLimit - curTick + 1;
+      }
+      newWinLine = room.game.winLine;
+
+      room.game.history.forEach((move) => {
+        newBoard[move.x][move.y] = move.chess;
+      });
+    }
+    setHistory(newHistory);
+    setTurn(newTurn);
+    setPreMove(newPreMove);
+    setStartedTurnTime(newStartedTurnTime);
+    setCurrentTick(newCurrentTick);
+    setWinLine(newWinLine);
+    setBoard(newBoard);
+  }
+
+  function moveHandler(move) {
+    const newBoard = JSON.parse(JSON.stringify(board));
+    newBoard[move.x][move.y] = move.chess;
+    setBoard(newBoard);
+    setHistory([...history, move]);
+    setStartedTurnTime(Date.now());
+    setCurrentTick(turnTimeLimit);
+  }
+
+  function sitHandler(sit) {
+    if (sit.at === config.playerX) {
+      setPlayerX(sit.player);
+      return;
+    }
+
+    if (sit.at === config.playerO) {
+      setPlayerO(sit.player);
+      return;
+    }
+  }
+
+  function standUpHandler(standUp) {
+    if (playerX !== null && standUp.id === playerX.id) {
+      setPlayerXReady(false);
+      setPlayerX(null);
+      return;
+    }
+
+    if (playerO !== null && standUp.id === playerO.id) {
+      setPlayerOReady(false);
+      setPlayerO(null);
+      return;
+    }
+  }
+
+  function readyHandler(ready) {
+    if (playerX !== null && ready.id === playerX.id) {
+      setPlayerXReady(true);
+      return;
+    }
+
+    if (playerO !== null && ready.id === playerO.id) {
+      setPlayerOReady(true);
+      return;
+    }
+  }
+
+  function startGameHandler() {
+    setState(config.GAME_STATE.STARTED);
+    setCurrentTick(turnTimeLimit);
+    setStartedTurnTime(Date.now());
+    setBoard(
+      Array(config.boardSize.row)
         .fill(null)
         .map(() => {
           return Array(config.boardSize.col).fill(null);
-        }),
-    },
-  ]);
-  const [stepNumber, setStepNumber] = useState(0);
-  const [turn, setTurn] = useState(config.playerX);
-  const [isAscending, setIsAscending] = useState(true);
-  const [gameover, setGameover] = useState(false);
-  const [winCells, setWinCells] = useState(null);
-  const [isWaiting, setIsWaiting] = useState(true);
-  const [roomInfo, setRoomInfo] = useState({});
-  const [playerType, setPlayerType] = useState(config.playerX);
-  const [roomId, setRoomId] = useState("");
-  const [chatHistory, setChatHistory] = useState({});
-
-  function handleClick(row, col) {
-    console.log("GameProvider: handleClick");
-    const curHistory = history.slice(0, stepNumber + 1);
-    const current = curHistory[curHistory.length - 1];
-    const cells = JSON.parse(JSON.stringify(current.cells));
-
-    if (gameover || cells[row][col]) {
-      return false;
-    }
-
-    cells[row][col] = turn;
-
-    let _winCells = checkWin(row, col, turn, curHistory.length - 1);
-
-    if (_winCells !== null) {
-      setWinCells(_winCells);
-      setGameover(true);
-    }
-
-    console.log("setHistory: ");
-
-    setHistory((history) => {
-      const curHistory = history.slice(0, stepNumber + 1);
-      return curHistory.concat([
-        {
-          cells: cells,
-          x: row,
-          y: col,
-          turn: turn,
-        },
-      ]);
-    });
-
-    setStepNumber((stepNumber) => {
-      return curHistory.length;
-    });
-    console.log(curHistory);
-    console.log("turn: " + turn);
-    let nextTurn = turn === config.playerX ? config.playerO : config.playerX;
-    console.log("next turn: " + nextTurn);
-    setTurn((turn) =>
-      turn === config.playerX ? config.playerO : config.playerX
+        })
     );
-
-    return true;
+    setWinLine(null);
+    setTurn(config.playerX);
+    setHistory([]);
+    setPreMove(null);
   }
 
-  function checkWin(row, col, user, stepNumber) {
-    if (stepNumber === 0) {
-      return null;
+  function syncCurrentTick() {
+    if (isStarted()) {
+      const curTick = Math.ceil((Date.now() - startedTurnTime) / 1000);
+      console.log(curTick);
+      setCurrentTick(turnTimeLimit - curTick + 1);
     }
+  }
 
-    const current = history[stepNumber];
-    const cells = current.cells.slice();
+  useEffect(() => {
+    window.addEventListener("visibilitychange", syncCurrentTick);
+    return () => {
+      window.removeEventListener("visibilitychange", syncCurrentTick);
+    };
+  }, [syncCurrentTick]);
 
-    // Get coordinates
-    let coorX = row;
-    let coorY = col;
+  useEffect(() => {
+    //document.addEventListener("visibilitychange", onFocus);
 
-    let countCol = 1;
-    let countRow = 1;
-    let countMainDiagonal = 1;
-    let countSkewDiagonal = 1;
-    let isBlock;
-    const rival = user === config.xPlayer ? config.oPlayer : config.xPlayer;
+    // if (currentTick > 0)
+    //   timer = setInterval(() => {
+    //     setCurrentTick(currentTick - 1);
+    //   }, 1000);
+    let timeout = null;
+    if (currentTick > 0) {
+      timeout = setTimeout(() => {
+        //
+        syncCurrentTick();
+      }, 1000);
+    }
+    return () => {
+      if (timeout !== null) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [currentTick, syncCurrentTick]);
 
-    // Check col
-    isBlock = true;
-    let winCells = [];
-    coorX -= 1;
-    while (coorX >= 0 && cells[coorX][coorY] === user) {
-      countCol += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
+  function gameOverHandler(winLine) {
+    setState(config.GAME_STATE.UNREADY);
+    //clearInterval(timer);
+    setPlayerXReady(false);
+    setPlayerOReady(false);
+    setCurrentTick(0);
+    if (winLine) {
+      setWinLine(winLine);
     }
-    if (coorX >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    while (coorX <= config.brdSize - 1 && cells[coorX][coorY] === user) {
-      countCol += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-    }
-    if (coorX <= config.brdSize - 1 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    if (isBlock === false && countCol >= 5) return winCells;
+  }
 
-    // Check row
-    isBlock = true;
-    winCells = [];
-    coorY -= 1;
-    while (coorY >= 0 && cells[coorX][coorY] === user) {
-      countRow += 1;
-      winCells.push([coorX, coorY]);
-      coorY -= 1;
-    }
-    if (coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorY += 1;
-    while (coorY <= config.brdSize - 1 && cells[coorX][coorY] === user) {
-      countRow += 1;
-      winCells.push([coorX, coorY]);
-      coorY += 1;
-    }
-    if (coorY <= config.brdSize - 1 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorY = col;
-    if (isBlock === false && countRow >= 5) return winCells;
+  function chatHandler(chatHistory) {
+    setChatHistory(chatHistory);
+  }
 
-    // Check main diagonal
-    isBlock = true;
-    winCells = [];
-    coorX -= 1;
-    coorY -= 1;
-    while (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] === user) {
-      countMainDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
-      coorY -= 1;
-    }
-    if (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY += 1;
-    while (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] === user
-    ) {
-      countMainDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-      coorY += 1;
-    }
-    if (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] !== rival
-    ) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    if (isBlock === false && countMainDiagonal >= 5) return winCells;
+  function isSatPlayer() {
+    if (playerX !== null && Auth.getCurrentUser()._id === playerX.id)
+      return playerX;
+    if (playerO !== null && Auth.getCurrentUser()._id === playerO.id)
+      return playerO;
+    return false;
+  }
 
-    // Check skew diagonal
-    isBlock = true;
-    winCells = [];
-    coorX -= 1;
-    coorY += 1;
-    while (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] === user) {
-      countSkewDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX -= 1;
-      coorY += 1;
-    }
-    if (coorX >= 0 && coorY >= 0 && cells[coorX][coorY] !== rival) {
-      isBlock = false;
-    }
-    coorX = row;
-    coorY = col;
-    winCells.push([coorX, coorY]);
-    coorX += 1;
-    coorY -= 1;
-    while (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] === user
-    ) {
-      countSkewDiagonal += 1;
-      winCells.push([coorX, coorY]);
-      coorX += 1;
-      coorY -= 1;
-    }
-    if (
-      coorX <= config.brdSize - 1 &&
-      coorY <= config.brdSize - 1 &&
-      cells[coorX][coorY] !== rival
-    ) {
-      isBlock = false;
-    }
-    if (isBlock === false && countSkewDiagonal >= 5) return winCells;
+  function isReady() {
+    const player = isSatPlayer();
+    if (!player) return true;
+    if (player === playerX) return playerXReady;
+    if (player === playerO) return playerOReady;
+  }
 
-    return null;
+  const isReadyVar = useMemo(isReady, [
+    playerX,
+    playerO,
+    playerXReady,
+    playerOReady,
+  ]);
+
+  function isStarted() {
+    return state === config.GAME_STATE.STARTED;
   }
 
   return (
     <GameContext.Provider
       value={{
+        board,
         history,
-        stepNumber,
         turn,
-        gameover,
-        winCells,
-        isWaiting,
-        roomInfo,
-        playerType,
-        handleClick,
-        setRoomId,
-        setPlayerType,
+        winLine,
+        currentTick,
+        chatHistory,
+        playerX,
+        setPlayerX,
+        playerO,
+        setPlayerO,
+        playerXReady,
+        setPlayerXReady,
+        playerOReady,
+        setPlayerOReady,
+        moveHandler,
+        setWinLine,
+        init,
+        isSatPlayer,
+        isReady,
+        isStarted,
+        sitHandler,
+        standUpHandler,
+        readyHandler,
+        startGameHandler,
+        gameOverHandler,
+        chatHandler,
       }}
     >
       {props.children}

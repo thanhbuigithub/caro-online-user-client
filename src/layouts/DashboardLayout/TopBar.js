@@ -105,6 +105,7 @@ const TopBar = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <AppBar
       className={clsx(classes.root, className)}

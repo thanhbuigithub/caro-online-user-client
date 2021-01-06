@@ -1,6 +1,9 @@
 import { io } from "socket.io-client";
 
-let socket;
+const socket = io(process.env.REACT_APP_ENDPOINT, {
+  transports: ["websocket"],
+  upgrade: false,
+});
 
 let socketManager = {
   openSocket: function () {
@@ -8,14 +11,15 @@ let socketManager = {
     return socket;
   },
   getSocket: function () {
-    if (socket === undefined) {
-      this.openSocket();
-    }
+    // if (socket === undefined) {
+    //   this.openSocket();
+    // }
     return socket;
   },
   closeSocket: function () {
     socket.disconnect();
     socket.off();
+    console.log(socket);
   },
 };
 

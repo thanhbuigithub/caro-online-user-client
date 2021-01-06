@@ -1,15 +1,7 @@
 import cookieService from "../../../service/cookieService";
 import SocketManager from "../../../socketio/SocketManager";
-const socket = SocketManager.getSocket();
+import jwt_decode from "jwt-decode";
 const Auth = {
-
-  setUser: function (user, next) {
-    localStorage.setItem('user', JSON.stringify(user));
-    next();
-  },
-  getUser: function () {
-    return JSON.parse(localStorage.getItem('user'));
-  },
 
   setAccessToken: function (token, next) {
     cookieService.set("access_token", token);
@@ -35,6 +27,10 @@ const Auth = {
   },
   isSocialLogin: function () {
     return localStorage.getItem('isSocial') ? true : false;
+  },
+  getCurrentUser: function () {
+    const token = this.getAccessToken();
+    return jwt_decode(token);
   },
 };
 
