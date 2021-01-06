@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 // import "./index.css";
 import Board from "./board";
 import Grid from "@material-ui/core/grid";
@@ -20,8 +20,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Game({ match }) {
+function Game() {
   const classes = useStyles();
+  const match = useParams();
   const {
     playerX,
     playerO,
@@ -34,16 +35,18 @@ function Game({ match }) {
     init,
   } = useContext(GameContext);
   const socket = SocketManager.getSocket();
-  let history = useHistory();
-
+  let history = useNavigate();
   const haveSit = function () {
     return playerX !== null || playerO !== null;
   };
 
+  // GAME HANDLE
   useEffect(() => {
-    socket.emit("join-room", match.params.id);
+    console.log("GAME RENDER");
+    socket.emit("join-room", match.id);
+    console.log("EMIT JOIN-ROOM");
     socket.on("join-room-failed", () => {
-      history.push(`/`);
+      history("/");
     });
   }, []);
 

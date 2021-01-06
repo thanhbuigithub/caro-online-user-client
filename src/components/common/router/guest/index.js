@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import auth from "../auth";
 
 const GuestRoute = ({ component: Component, ...rest }) => {
@@ -8,7 +8,7 @@ const GuestRoute = ({ component: Component, ...rest }) => {
       {...rest}
       render={(props) => {
         if (!auth.isAuthenticated()) return <Component {...props} />;
-        else return <Redirect to={{ pathname: "/" }} />;
+        else return <Navigate to={{ pathname: "/" }} />;
       }}
     />
   );

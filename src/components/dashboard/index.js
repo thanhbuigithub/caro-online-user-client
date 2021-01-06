@@ -1,40 +1,26 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useStyles from "./muiStyle";
-import "./index.css";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import PersonIcon from "@material-ui/icons/Person";
-import Brightness1Icon from "@material-ui/icons/Brightness1";
 import Container from "@material-ui/core/Container";
-import AddGameButton from "../game/AddGameButton";
-import JoinGameButton from "../game/JoinGameButton";
 import UserContext from "../../contexts/UserContext";
 import GameContext from "../../contexts/GameContext";
 import SocketManager from "../../socketio/SocketManager";
-import Auth from "../common/router/auth";
+import Box from "@material-ui/core/Box";
+import PageTittle from "../PageTittle";
+import BudgetNewGame from "./NewgameView";
+import BudgetPlayNowGame from "./PlaygameNowView";
+import PlaygameIdView from "./PlaygameIdView";
+import OnlineList from "./OnlineList/index";
+import GameList from "./GameList";
+import RankList from "./RankList";
 
 function Home() {
   const classes = useStyles();
-  let history = useHistory();
+  const navigate = useNavigate();
   const { listUserOnline, setListUserOnline } = useContext(UserContext);
   const { init } = useContext(GameContext);
   const socket = SocketManager.getSocket();
-  // const { setListUserOnline } = useContext(UserContext);
-
-  // useEffect(() => {
-  //   const user = Auth.getCurrentUser();
-  //   console.log(socket);
-  //   socket.emit("join", user._id);
-  //   // return () => {
-  //   //   socketManager.closeSocket();
-  //   // };
-  // }, []);
 
   useEffect(() => {
     socket.on("new-connect", (list_user_online) => {
@@ -48,13 +34,13 @@ function Home() {
 
   useEffect(() => {
     socket.on("join-room-successful", (room) => {
-      history.push(`/game/${room.id}`);
+      console.log(room);
+      navigate(`/game/${room.id}`);
     });
 
     socket.on("create-room-successful", (room) => {
-      history.push(`/game/${room.id}`);
+      navigate(`/game/${room.id}`);
       init(room);
-      console.log(room);
     });
 
     return () => {
@@ -63,49 +49,34 @@ function Home() {
     };
   }, [init]);
 
-  function generate(element) {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((value) =>
-      React.cloneElement(element, {
-        key: value,
-      })
-    );
-  }
-
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2} style={{ height: "100%" }}>
-        <Grid item xs={3} className={classes.box}>
-          <Grid container direction="column">
-            <Grid item style={{ position: "sticky", top: "0", zIndex: "2" }}>
-              <Paper className={classes.paper}>Online</Paper>
+    <PageTittle className={classes.root} title="DashBoard">
+      <Container maxWidth={false}>
+        <Grid container spacing={3}>
+          <Grid item lg={4} sm={6} xl={3} xs={12}>
+            <BudgetNewGame />
+          </Grid>
+          <Grid item lg={4} sm={6} xl={3} xs={12}>
+            <BudgetPlayNowGame />
+          </Grid>
+          <Grid item lg={4} sm={6} xl={3} xs={12}>
+            <PlaygameIdView />
+          </Grid>
+          <Box component="span" m={4} width="100%" />
+          <Grid container spacing={3} style={{ margin: 0 }}>
+            <Grid item lg={4} md={6} xl={3} xs={12}>
+              <OnlineList data={listUserOnline} />
             </Grid>
-            <Grid item className={classes.list}>
-              <List style={{ padding: 0 }}>
-                {listUserOnline.map((username) => (
-                  <ListItem className={classes.itemUser}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <PersonIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={username} />
-                    <Brightness1Icon className={classes.iconOnline} />
-                  </ListItem>
-                ))}
-              </List>
+            <Grid item lg={4} md={6} xl={3} xs={12}>
+              <GameList />
+            </Grid>
+            <Grid item lg={4} md={6} xl={3} xs={12}>
+              <RankList />
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={9} className={classes.box}>
-          <Container className={classes.cardGrid} maxWidth="xl">
-            <Grid container spacing={3} component="span">
-              <AddGameButton />
-              <JoinGameButton />
-            </Grid>
-          </Container>
-        </Grid>
-      </Grid>
-    </div>
+      </Container>
+    </PageTittle>
   );
 }
 

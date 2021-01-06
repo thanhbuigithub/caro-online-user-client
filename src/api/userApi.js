@@ -1,27 +1,43 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
-  login: (username, password) => {
+  login: (userName, password) => {
     const url = "/user/login";
-    return axiosClient.post(url, { username: username, password: password });
+    return axiosClient.post(url, { username: userName, password: password });
   },
 
-  register: (username, password, name, email) => {
+  register: (email, userName, fullName, password) => {
     const url = "/user/register";
     return axiosClient.post(url, {
-      username: username,
+      username: userName,
       password: password,
-      name: name,
+      name: fullName,
       email: email,
     });
   },
 
-  updateProfile: (newName, newEmail) => {
+  updateProfile: (newName, newEmail, newUserName) => {
     const url = `/user/update`;
-    return axiosClient.post(url, {
+    return axiosClient.put(url, {
       newName: newName,
       newEmail: newEmail,
+      newUserName: newUserName,
     });
+  },
+
+  loadAvatar: (filename) => {
+    const url = `/image/avatar/${filename}`;
+    return axiosClient.get(url);
+  },
+
+  getAvatar: (filename) => {
+    const url = `/image/get/${filename}`;
+    return axiosClient.get(url);
+  },
+
+  uploadAvatar: (data) => {
+    const url = "/image";
+    return axiosClient.post(url, data);
   },
 
   getProfile: () => {
@@ -30,27 +46,52 @@ const userApi = {
   },
 
   changePassword: (oldPassword, newPassword) => {
-    const url = `/user/changePassword`;
-    return axiosClient.post(url, {
+    const url = `/user/change_password`;
+    return axiosClient.put(url, {
       oldPassword: oldPassword,
-      newPassword: newPassword,
+      newPassword: newPassword
     });
   },
 
-  loginGoogle: (id_token) => {
-    const url = "/user/google_login";
+  forgotPassword: (email) => {
+    const url = `/user/forgot_password`;
     return axiosClient.post(url, {
-      id_token: id_token,
+      email: email,
     });
   },
 
-  loginFacebook: (user_id, access_token) => {
-    const url = "/user/facebook_login";
-    return axiosClient.post(url, {
-      user_id: user_id,
-      access_token: access_token,
+  resetPassword: (new_password, reset_password_link) => {
+    const url = `/user/reset_password`;
+    return axiosClient.put(url, {
+      newPassWord: new_password,
+      resetPassWordLink: reset_password_link,
     });
   },
+
+  // loginGoogle: (id_token) => {
+  //   const url = "/user/google_login";
+  //   return axiosClient.post(url, {
+  //     id_token: id_token,
+  //   });
+  // },
+
+  loginGoogle: () => {
+    const url = "/user/login/google";
+    return axiosClient.get(url);
+  },
+
+  loginFacebook: () => {
+    const url = "/user/login/facebook";
+    return axiosClient.get(url);
+  },
+
+  // loginFacebook: (user_id, access_token) => {
+  //   const url = "/user/facebook_login";
+  //   return axiosClient.post(url, {
+  //     user_id: user_id,
+  //     access_token: access_token,
+  //   });
+  // },
 
   active: (token) => {
     const url = "/user/active";
