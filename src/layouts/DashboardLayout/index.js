@@ -101,15 +101,15 @@ const DashboardLayout = () => {
           </div>
         </>
       ) : (
-        <div
-          className={classes.contentContainer}
-          style={{ paddingTop: "64px" }}
-        >
-          <div className={classes.content}>
-            <Outlet />
+          <div
+            className={classes.contentContainer}
+            style={{ paddingTop: "64px" }}
+          >
+            <div className={classes.content}>
+              <Outlet />
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
