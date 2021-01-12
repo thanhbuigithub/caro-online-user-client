@@ -46,9 +46,11 @@ const DashboardLayout = () => {
   const socket = socketManager.getSocket();
   const isHomePage = location.pathname === "/";
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+
   const {
     handleSaveUser,
     handleIsUploadAvatar,
+    isUploadAvatar,
     _id,
     avatar,
     handleSaveAvatar,
@@ -67,21 +69,43 @@ const DashboardLayout = () => {
     init,
   } = useContext(GameContext);
 
-  // useEffect(() => {
-  //   const fetchAvatar = async () => {
-  //     try {
-  //       const avatarUser = await userApi.loadAvatar(id);
-  //       handleSaveAvatar(avatarUser);
-  //       console.log(avatarUser);
-  //       handleIsUploadAvatar(false);
-  //     } catch (err) {
-  //       console.log("Error: ", err.response);
-  //     }
-  //   };
-  //   if (isUploadAvatar) {
-  //     return fetchAvatar();
-  //   }
-  // }, []);
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar First");
+        }
+      } catch (err) {
+        console.log("Avatar not updated");
+      }
+    };
+    getAvatar();
+  }, []);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar Later");
+          handleIsUploadAvatar(false);
+        }
+      } catch (err) {
+        console.log("Error: ", err.response);
+      }
+    };
+    if (isUploadAvatar) {
+      fetchAvatar();
+    }
+  });
 
   return (
     <div className={classes.root}>

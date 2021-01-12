@@ -24,12 +24,23 @@ const useStyles = makeStyles((theme) => ({
     },
     cardIcon: {
         fontSize: 90,
-        padding: theme.spacing(3),
-        color: '#8e24aa'
+        color: '#8e24aa',
     },
     cardTitle: {
         color: '#8e24aa'
-    }
+    },
+    iconPing: {
+        padding: theme.spacing(2),
+        animation: '$iconSpin 5s cubic-bezier(.8, 0.6, .2, 0.9) infinite',
+    },
+    "@keyframes iconSpin": {
+        "from": {
+            transform: "rotate(0deg)"
+        },
+        "to": {
+            transform: "rotate(360deg)"
+        }
+    },
 }));
 
 export default function PlayNowGameButton({ onAddBoard }) {
@@ -44,7 +55,9 @@ export default function PlayNowGameButton({ onAddBoard }) {
     return (
         <>
             <Card className={classes.card} onClick={handleShowModal}>
-                <StatisticalIcon className={classes.cardIcon} />
+                <div className={classes.iconPing}>
+                    <StatisticalIcon className={classes.cardIcon} />
+                </div>
             </Card>
             {displayBoardModal ? <AddGameModal handleToggleModal={handleHiddenModal} onAddBoard={onAddBoard} /> : null}
 

@@ -16,7 +16,7 @@ export default (props) => {
   });
   const [error, setError] = useState("");
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
-  const [avatar, setAvatar] = useState("/static/unknown_avatar.jpg");
+  const [avatar, setAvatar] = useState(null);
 
   const { _id, name, username, email, date, isAdmin } = user;
 

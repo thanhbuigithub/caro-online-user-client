@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -19,11 +19,7 @@ import MatchIcon from '../../../library/icon/MatchIcon';
 import WinmatchIcon from '../../../library/icon/WinmatchIcon';
 import PercentWin from '../../../library/icon/PercentWin';
 import UserContext from '../../../contexts/UserContext';
-const user = {
-  // avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
-};
+
 const colors = ['#e53935', '#43a047', '#fb8c00', '#3949ab']
 const items = [
   {
@@ -92,7 +88,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           className={classes.avatar}
           component={RouterLink}
           to="/profile"
-          src={avatar}
+          src={avatar || "/static/unknown_avatar.jpg"}
         />
         <Typography
           className={classes.name}
