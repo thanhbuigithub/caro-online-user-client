@@ -19,7 +19,7 @@ import MatchIcon from "../../../library/icon/MatchIcon";
 import WinmatchIcon from "../../../library/icon/WinmatchIcon";
 import PercentWin from "../../../library/icon/PercentWin";
 import UserContext from "../../../contexts/UserContext";
-
+import MatchModal from "./matchModal/allMatchModal";
 const colors = ["#e53935", "#43a047", "#fb8c00", "#3949ab"];
 const items = [
   {
@@ -65,12 +65,21 @@ const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
   const { user, avatar } = useContext(UserContext);
+  const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  const handleClickPlayer = () => {
+    setOpenModal(true);
+  }
+
+  const handleToggle = () => {
+    setOpenModal(false);
+  };
 
   const value = [
     user.elo,
@@ -81,6 +90,9 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
   const content = (
     <Box height="100%" display="flex" flexDirection="column">
+      <MatchModal
+        status={openModal}
+        handleToggle={handleToggle} />
       <Box alignItems="center" display="flex" flexDirection="column" p={2}>
         <Avatar
           className={classes.avatar}
@@ -111,7 +123,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
       </Box>
       <Box my={2} className={classes.button}>
         <Button
-          onClick={() => { }}
+          onClick={handleClickPlayer}
           color="primary"
           fullWidth
           size="large"
