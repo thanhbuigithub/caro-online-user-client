@@ -4,7 +4,6 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Board from "./board";
 import Grid from "@material-ui/core/grid";
 import Button from "@material-ui/core/button";
-import Paper from "@material-ui/core/paper";
 import { makeStyles } from "@material-ui/core/styles";
 import GameContext from "../../contexts/GameContext";
 import SocketManager from "../../socketio/SocketManager";
