@@ -101,10 +101,11 @@ const StyledListItem = withStyles((theme) => ({
   root: {
     "&:hover": {
       borderRadius: "5px",
+      color: theme.palette.common.white,
       backgroundColor: theme.palette.primary.main,
-      "& .MuiListItemIcon-root & .MuiBadge-root,& .MuiListItemText-primary, & .MuiSvgIcon-root": {
-        color: theme.palette.common.white,
-      },
+      // "& .MuiListItemIcon-root & .MuiBadge-root,& .MuiListItemText-primary, & .MuiSvgIcon-root": {
+      //   color: theme.palette.common.white,
+      // },
     },
   },
 }))(ListItem);
@@ -163,22 +164,10 @@ const Rank = ({ className, ...rest }) => {
                       handleClick(index);
                     }}
                   >
-                    <ListItemIcon>
-                      <StyledBadge
-                        style={{ backgroundColor: "transparent" }}
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        variant="dot"
-                      >
-                        <Avatar aria-label="recipe" src="/static/logo.svg">
-                          <PersonIcon style={{ color: "black" }} />
-                        </Avatar>
-                      </StyledBadge>
-                    </ListItemIcon>
-                    <ListItemText primary={user.username} />
+                    <Avatar aria-label="recipe" src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/logo.svg"}>
+                      <PersonIcon style={{ color: "black" }} />
+                    </Avatar>
+                    <ListItemText primary={user.username} style={{ marginLeft: '16px' }} />
                     {/* {open[index] ? <ExpandLess /> : <ExpandMore />} */}
                     {user.elo}
                   </StyledListItem>

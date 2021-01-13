@@ -174,7 +174,7 @@ const OnlineList = ({ className, data, ...rest }) => {
                           }}
                           variant="dot"
                         >
-                          <Avatar aria-label="recipe" src="/static/logo.svg">
+                          <Avatar aria-label="recipe" src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/logo.svg"}>
                             <PersonIcon style={{ color: "black" }} />
                           </Avatar>
                         </StyledBadge>

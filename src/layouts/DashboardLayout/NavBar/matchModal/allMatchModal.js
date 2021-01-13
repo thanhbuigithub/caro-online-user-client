@@ -69,9 +69,9 @@ export default function CustomizedDialogs({ status, handleToggle }) {
             maxWidth='xl'
             onClose={handleToggle}
             aria-labelledby="customized-dialog-title" open={status}>
-            <DialogTitle id="customized-dialog-title" onClose={handleToggle}>
+            {/* <DialogTitle id="customized-dialog-title" onClose={handleToggle}>
                 111
-            </DialogTitle>
+            </DialogTitle> */}
             <DialogContent dividers>
                 <Container maxWidth={false}>
                     <Grid container spacing={3}>

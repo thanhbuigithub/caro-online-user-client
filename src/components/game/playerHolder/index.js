@@ -55,7 +55,10 @@ function PlayerHolder({ sat, player }) {
       return (
         <>
           <div>{player.username}</div>
-          <Avatar alt={player.username} src="" className={classes.avatar} />
+          <Avatar
+            alt={player.username}
+            src={player.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${player.id}` : null}
+            className={classes.avatar} />
           <div>Elo. {player.elo}</div>
         </>
       );
