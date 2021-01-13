@@ -43,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
     height: 28,
     margin: 4,
   },
+  listItem: {
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
 }));
 
 function Chat({}) {
@@ -67,12 +71,13 @@ function Chat({}) {
     <div className={classes.root}>
       <List className={classes.messageBox} id="message-box">
         {chatHistory.map((chat, index) => (
-          <ListItem key={index}>
+          <ListItem key={index} className={classes.listItem}>
             <ListItemText
             //primary="Single-line item"
             // secondary={secondary ? 'Secondary text' : null}
             >
-              {`${chat.sender.username}: ${chat.message}`}
+              <strong>{chat.sender.username}:</strong>
+              {` ${chat.message}`}
             </ListItemText>
           </ListItem>
         ))}

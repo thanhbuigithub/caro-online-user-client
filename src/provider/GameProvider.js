@@ -91,7 +91,9 @@ const GameProvider = (props) => {
     const newBoard = JSON.parse(JSON.stringify(board));
     newBoard[move.x][move.y] = move.chess;
     setBoard(newBoard);
+    setTurn(turn === config.playerX ? config.playerO : config.playerX);
     setHistory([...history, move]);
+    setPreMove(move);
     setStartedTurnTime(Date.now());
     setCurrentTick(turnTimeLimit);
   }
@@ -231,6 +233,12 @@ const GameProvider = (props) => {
     return state === config.GAME_STATE.STARTED;
   }
 
+  function convertChess(player) {
+    if (playerX !== null && player.id === playerX.id) return config.playerX;
+    if (playerO !== null && player.id === playerO.id) return config.playerO;
+    return null;
+  }
+
   return (
     <GameContext.Provider
       value={{
@@ -262,6 +270,10 @@ const GameProvider = (props) => {
         chatHandler,
         players,
         setPlayers,
+        preMove,
+        convertChess,
+        turnTimeLimit,
+        winner,
       }}
     >
       {props.children}

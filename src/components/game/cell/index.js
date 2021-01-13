@@ -20,7 +20,7 @@ function checkWinCell(winLine, row, col) {
 }
 
 function Cell({ value, row, col }) {
-  const { turn, winLine } = useContext(GameContext);
+  const { turn, winLine, preMove } = useContext(GameContext);
   const socket = SocketManager.getSocket();
 
   const needToDisable = false;
@@ -50,9 +50,9 @@ function Cell({ value, row, col }) {
   const chessAssetFromValue = (value) => {
     switch (value) {
       case config.playerX:
-        return "X";
+        return "/x.png";
       case config.playerO:
-        return "O";
+        return "/o.png";
       default:
         return "";
     }
@@ -60,12 +60,18 @@ function Cell({ value, row, col }) {
 
   return (
     <div
-      className={`cell ${isWinnerCell ? "winner-cell" : ""}`}
+      className={`cell ${isWinnerCell ? "winner-cell" : ""} ${
+        preMove !== null && preMove.x === row && preMove.y === col
+          ? "pre-move"
+          : null
+      }`}
       onClick={onClick}
       row={row}
       col={col}
     >
-      {chessAssetFromValue(value)}
+      {chessAssetFromValue(value) === "" ? null : (
+        <img src={chessAssetFromValue(value)}></img>
+      )}
     </div>
   );
 }

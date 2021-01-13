@@ -232,7 +232,12 @@ function Game() {
           direction="column"
           alignItems="center"
         >
-          <Button variant="contained" color="default" onClick={handleShowModal}>
+          <Button
+            variant="contained"
+            color="primary"
+            elevation={3}
+            onClick={handleShowModal}
+          >
             Danh sách người chơi
           </Button>
           {displayBoardModal ? (

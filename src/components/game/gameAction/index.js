@@ -25,14 +25,19 @@ function GameAction({}) {
   };
 
   return (
-    <div className="">
-      {isStarted() && <div>{`${currentTick}`}</div>}
-      <div>
+    <div className="game-action-container">
+      {isStarted() && <div className="tick">{`${currentTick}`}</div>}
+      <div className="game-action-button-container">
         {/* <Button variant="contained" color="default">
           Cài đặt
         </Button> */}
         {isSatPlayer() && !isStarted() && (
-          <Button variant="contained" color="default" onClick={emitStandUp}>
+          <Button
+            variant="contained"
+            color="primary"
+            elevation={3}
+            onClick={emitStandUp}
+          >
             Đứng lên
           </Button>
         )}
@@ -41,10 +46,10 @@ function GameAction({}) {
         </Button> */}
         {isStarted() && isSatPlayer() && (
           <>
-            <Button variant="contained" color="default" onClick={surrender}>
+            <Button variant="contained" color="primary" onClick={surrender}>
               Xin thua
             </Button>
-            <Button variant="contained" color="default" onClick={toDraw}>
+            <Button variant="contained" color="primary" onClick={toDraw}>
               Xin hoà
             </Button>
           </>

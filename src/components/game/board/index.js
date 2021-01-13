@@ -9,7 +9,9 @@ import Button from "@material-ui/core/Button";
 //-------------- Board --------------
 
 function Board({}) {
-  const { board, moveHandler, isReady, isStarted } = useContext(GameContext);
+  const { board, moveHandler, isReady, isStarted, winner } = useContext(
+    GameContext
+  );
   const cellsDiv = [];
   const socket = SocketManager.getSocket();
 
@@ -41,16 +43,25 @@ function Board({}) {
     return (
       <div className="ready-modal">
         {isReady() ? (
-          <span>Waiting for another player...</span>
+          <span className="waiting-text">
+            <strong>Đợi người chơi khác ...</strong>
+          </span>
         ) : (
-          <Button
-            variant="contained"
-            color="default"
-            elevation={3}
-            onClick={onClickReady}
-          >
-            Sẵn sàng
-          </Button>
+          <>
+            {winner !== null && winner && (
+              <span className="winner-text">
+                <strong>Người chơi {winner} chiến thắng !!!</strong>
+              </span>
+            )}
+            <Button
+              variant="contained"
+              color="secondary"
+              elevation={3}
+              onClick={onClickReady}
+            >
+              Sẵn sàng
+            </Button>
+          </>
         )}
       </div>
     );

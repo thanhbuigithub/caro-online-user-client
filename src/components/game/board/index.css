@@ -18,4 +18,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+
+.waiting-text {
+  color: darkgrey;
+  background-color: white;
+  border-radius: 5px;
+  font-size: 30;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.winner-text {
+  color: orange;
+  background-color: white;
+  border-radius: 5px;
+  font-size: 40;
+  font-weight: bold;
+  padding: 20px;
+  margin-bottom: 20px;
 }
