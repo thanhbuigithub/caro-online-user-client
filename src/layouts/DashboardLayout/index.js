@@ -11,6 +11,7 @@ import auth from "../../components/common/router/auth";
 import GameContext from "../../contexts/GameContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DetailPlayerModal from "../../components/detailUser/DetailPlayerModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -98,9 +99,11 @@ const DashboardLayout = () => {
     setAvatar,
     handleSaveAvatar,
     user,
+    openPlayerDetail,
+    setOpenPlayerDetail,
+    setPlayerDetails,
   } = useContext(UserContext);
   const match = useParams();
-
 
   useEffect(() => {
     const getAvatar = async () => {
@@ -138,7 +141,6 @@ const DashboardLayout = () => {
       fetchAvatar();
     }
   });
-
 
   const acceptInvite = (roomId, password) => {
     socket.emit("accept-invite", roomId);
@@ -190,6 +192,17 @@ const DashboardLayout = () => {
     });
   }, []);
 
+  useEffect(() => {
+    socket.on("open-detail-dialog", (detailPlayer) => {
+      setPlayerDetails(detailPlayer);
+      setOpenPlayerDetail(true);
+      //setListUserOnline(list_user_online);
+    });
+
+    return () => {
+      socket.off("open-detail-dialog");
+    };
+  }, [setPlayerDetails, setOpenPlayerDetail]);
 
   return (
     <div className={classes.root}>
@@ -209,15 +222,15 @@ const DashboardLayout = () => {
           </div>
         </>
       ) : (
-          <div
-            className={classes.contentContainer}
-            style={{ paddingTop: "64px" }}
-          >
-            <div className={classes.content}>
-              <Outlet />
-            </div>
+        <div
+          className={classes.contentContainer}
+          style={{ paddingTop: "64px" }}
+        >
+          <div className={classes.content}>
+            <Outlet />
           </div>
-        )}
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -229,6 +242,7 @@ const DashboardLayout = () => {
         draggable
         pauseOnHover
       />
+      {openPlayerDetail && <DetailPlayerModal />}
     </div>
   );
 };

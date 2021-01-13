@@ -3,6 +3,7 @@ import { useState } from "react";
 import UserContext from "../contexts/UserContext";
 import userApi from "../api/userApi";
 import config from "../config/Config";
+import SocketManager from "../socketio/SocketManager";
 
 export default (props) => {
   const [listUserOnline, setListUserOnline] = useState([]);
@@ -37,6 +38,9 @@ export default (props) => {
   const [rooms, setRooms] = useState([]);
 
   const [rankList, setRankList] = useState([]);
+
+  const [openPlayerDetail, setOpenPlayerDetail] = useState(false);
+  const [playerDetails, setPlayerDetails] = useState(null);
 
   const handleIsUploadAvatar = (value) => {
     setIsUploadAvatar(value);
@@ -99,6 +103,12 @@ export default (props) => {
       // else setError(err.response.data);
     }
   };
+
+  const openPlayerDetailDialog = (id) => {
+    const socket = SocketManager.getSocket();
+    socket.emit("detail-player", id);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -121,6 +131,11 @@ export default (props) => {
         setRooms,
         rankList,
         setRankList,
+        openPlayerDetail,
+        setOpenPlayerDetail,
+        playerDetails,
+        setPlayerDetails,
+        openPlayerDetailDialog,
       }}
     >
       {props.children}

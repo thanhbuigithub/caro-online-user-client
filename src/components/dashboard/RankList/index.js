@@ -113,13 +113,14 @@ const Rank = ({ className, ...rest }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(Array(4).fill(false));
-  const { rankList } = useContext(UserContext);
+  const { rankList, openPlayerDetailDialog } = useContext(UserContext);
 
-  const handleClick = (indexItem) => {
+  const handleClick = (indexItem, id) => {
     const changeArray = open.map((item, index) =>
       index === indexItem ? (item = !item) : (item = false)
     );
     setOpen(changeArray);
+    openPlayerDetailDialog(id);
   };
 
   return (
@@ -160,7 +161,7 @@ const Rank = ({ className, ...rest }) => {
                   <StyledListItem
                     button
                     onClick={() => {
-                      handleClick(index);
+                      handleClick(index, user.id);
                     }}
                   >
                     <ListItemIcon>
