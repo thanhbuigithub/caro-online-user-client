@@ -99,6 +99,7 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
   const {
     _id,
     user,
+    isSocialLogin,
     handleSaveUser,
     handleSaveAvatar,
     isUploadAvatar,
@@ -242,7 +243,7 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </StyledMenuItem>
-          <StyledMenuItem
+          {!isSocialLogin ? <StyledMenuItem
             onClick={() => {
               navigate("/change_password");
               handleClose();
@@ -252,7 +253,7 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
               <VpnKeyIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary="Change Password" />
-          </StyledMenuItem>
+          </StyledMenuItem> : null}
           <StyledMenuItem
             onClick={() => {
               auth.logout(() => {

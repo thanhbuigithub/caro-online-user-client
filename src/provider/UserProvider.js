@@ -21,7 +21,7 @@ export default (props) => {
   const [error, setError] = useState("");
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
   const [avatar, setAvatar] = useState(null);
-
+  const [isSocialLogin, setIsSocialLogin] = useState(false);
   const {
     _id,
     name,
@@ -121,6 +121,8 @@ export default (props) => {
         setRooms,
         rankList,
         setRankList,
+        isSocialLogin,
+        setIsSocialLogin
       }}
     >
       {props.children}

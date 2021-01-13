@@ -80,12 +80,12 @@ const NavBar = ({ onMobileClose, openMobile }) => {
   const handleToggle = () => {
     setOpenModal(false);
   };
-
+  const percent = user.numOfMatches > 0 ? Math.round((user.winMatches / user.numOfMatches) * 100, 2) : 0;
   const value = [
     user.elo,
     user.numOfMatches,
     user.winMatches,
-    Math.round((user.winMatches / user.numOfMatches) * 100, 2),
+    percent
   ];
 
   const content = (

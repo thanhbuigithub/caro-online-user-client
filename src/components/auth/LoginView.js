@@ -28,7 +28,7 @@ import auth from "../common/router/auth";
 import userApi from "../../api/userApi";
 import CloseIcon from '@material-ui/icons/Close';
 import swal from 'sweetalert';
-
+import UserContext from "../../contexts/UserContext";
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -100,7 +100,7 @@ const LoginView = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
-
+  const { setIsSocialLogin } = useContext(UserContext);
   function useQuery() {
     return new URLSearchParams(location.search);
   }
@@ -112,9 +112,15 @@ const LoginView = () => {
       try {
         const token = query.get('token');
         if (token) {
+          setIsSocialLogin(true);
+        }
+        if (token) {
           auth.setAccessToken(token, () => {
             navigate('/', { replace: true });
           })
+        }
+        if (!token) {
+          setIsSocialLogin(false);
         }
       } catch (error) {
         console.log(error);
