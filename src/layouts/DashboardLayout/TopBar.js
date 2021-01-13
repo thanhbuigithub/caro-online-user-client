@@ -183,19 +183,19 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
   //   // };
   // }, []);
 
-  useEffect(() => {
-    const getAvatar = async () => {
-      try {
-        const fetchUser = await userApi.getAvatar(_id);
-        if (fetchUser.success) {
-          handleSaveAvatar(fetchUser.path);
-        }
-      } catch (err) {
-        console.log("Avatar not updated");
-      }
-    };
-    getAvatar();
-  }, [avatar, _id]);
+  // useEffect(() => {
+  //   const getAvatar = async () => {
+  //     try {
+  //       const fetchUser = await userApi.getAvatar(_id);
+  //       if (fetchUser.success) {
+  //         handleSaveAvatar(fetchUser.path);
+  //       }
+  //     } catch (err) {
+  //       console.log("Avatar not updated");
+  //     }
+  //   };
+  //   getAvatar();
+  // }, [avatar, _id]);
 
   return (
     <AppBar className={clsx(classes.root, className)} elevation={0} {...rest}>

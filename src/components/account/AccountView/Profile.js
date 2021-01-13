@@ -80,20 +80,16 @@ const Profile = ({ className, ...rest }) => {
       let formData = new FormData();
       formData.append('caption', user._id);
       formData.append('file', uploadedImage);
-      // const object = {};
-      // formData.forEach((value, key) => object[key] = value);
-      // const data = JSON.stringify(object);
-      // console.log(object);
       try {
         const uploadImage = await userApi.uploadAvatar(formData);
         handleSaveAvatar(uploadImage.image.filename);
         setIsUpload(false);
-        handleIsUploadAvatar(true);
-        await swal("Yeah! Your avatar has been changed!", {
+        swal("Yeah! Your avatar has been changed!", {
           icon: "success",
           buttons: false,
           timer: 1500,
         });
+        handleIsUploadAvatar(true);
       } catch (err) {
         console.log(err.response)
       }
