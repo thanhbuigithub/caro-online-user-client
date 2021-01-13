@@ -156,7 +156,7 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
       }
     };
     getAvatar();
-  }, [avatar]);
+  }, [avatar, _id]);
 
   return (
     <AppBar className={clsx(classes.root, className)} elevation={0} {...rest}>

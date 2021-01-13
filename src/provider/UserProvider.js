@@ -12,13 +12,29 @@ export default (props) => {
     username: "",
     email: "",
     date: new Date(),
+    elo: 0,
+    numOfMatches: 0,
+    winMatches: 0,
     isAdmin: false,
   });
   const [error, setError] = useState("");
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
   const [avatar, setAvatar] = useState("/static/unknown_avatar.jpg");
 
-  const { _id, name, username, email, date, isAdmin } = user;
+  const {
+    _id,
+    name,
+    username,
+    email,
+    date,
+    isAdmin,
+    elo,
+    numOfMatches,
+    winMatches,
+  } = user;
+  const [rooms, setRooms] = useState([]);
+
+  const [rankList, setRankList] = useState([]);
 
   const handleIsUploadAvatar = (value) => {
     setIsUploadAvatar(value);
@@ -36,6 +52,9 @@ export default (props) => {
       email: fetchUser.email,
       isAdmin: fetchUser.isAdmin,
       date: fetchUser.date,
+      elo: fetchUser.elo,
+      numOfMatches: fetchUser.numOfMatches,
+      winMatches: fetchUser.winMatches,
     });
   };
 
@@ -93,6 +112,10 @@ export default (props) => {
         setListUserOnline,
         handleChangeProfile,
         handleChangePassword,
+        rooms,
+        setRooms,
+        rankList,
+        setRankList,
       }}
     >
       {props.children}

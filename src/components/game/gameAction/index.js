@@ -16,6 +16,14 @@ function GameAction({}) {
     socket.emit("stand-up");
   };
 
+  const surrender = () => {
+    socket.emit("surrender");
+  };
+
+  const toDraw = () => {
+    socket.emit("to-draw");
+  };
+
   return (
     <div className="">
       {isStarted() && <div>{`${currentTick}`}</div>}
@@ -33,10 +41,10 @@ function GameAction({}) {
         </Button> */}
         {isStarted() && isSatPlayer() && (
           <>
-            <Button variant="contained" color="default">
+            <Button variant="contained" color="default" onClick={surrender}>
               Xin thua
             </Button>
-            <Button variant="contained" color="default">
+            <Button variant="contained" color="default" onClick={toDraw}>
               Xin hoà
             </Button>
           </>

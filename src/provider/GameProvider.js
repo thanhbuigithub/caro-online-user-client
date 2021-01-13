@@ -16,6 +16,7 @@ const GameProvider = (props) => {
 
   const [turn, setTurn] = useState(config.playerX);
   const [winLine, setWinLine] = useState(null);
+  const [winner, setWinner] = useState(null);
   const [roomId, setRoomId] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [players, setPlayers] = useState([]);
@@ -80,6 +81,10 @@ const GameProvider = (props) => {
     setCurrentTick(newCurrentTick);
     setWinLine(newWinLine);
     setBoard(newBoard);
+  }
+
+  function joinHandler(player) {
+    if (!players.includes(player)) setPlayers([...players, player]);
   }
 
   function moveHandler(move) {
@@ -182,11 +187,14 @@ const GameProvider = (props) => {
     };
   }, [currentTick, syncCurrentTick]);
 
-  function gameOverHandler(winLine) {
+  function gameOverHandler(winner, winLine, playerX, playerO) {
     setState(config.GAME_STATE.UNREADY);
     //clearInterval(timer);
     setPlayerXReady(false);
     setPlayerOReady(false);
+    setPlayerX(playerX);
+    setPlayerO(playerO);
+    setWinner(winner);
     setCurrentTick(0);
     if (winLine) {
       setWinLine(winLine);
@@ -252,6 +260,8 @@ const GameProvider = (props) => {
         startGameHandler,
         gameOverHandler,
         chatHandler,
+        players,
+        setPlayers,
       }}
     >
       {props.children}

@@ -23,24 +23,17 @@ function Home() {
   const socket = SocketManager.getSocket();
 
   useEffect(() => {
-    socket.on("new-connect", (list_user_online) => {
-      console.log("New Connect");
-      setListUserOnline(list_user_online);
-    });
-    return () => {
-      socket.off("new-connect");
-    };
-  }, [setListUserOnline]);
-
-  useEffect(() => {
     socket.on("join-room-successful", (room) => {
       console.log(room);
       navigate(`/game/${room.id}`);
     });
 
-    socket.on("create-room-successful", (room) => {
-      navigate(`/game/${room.id}`);
-      init(room);
+    socket.on("create-room-successful", (roomId, password) => {
+      if (password) {
+        navigate(`/game/${roomId}?pwd=${password}`);
+      } else navigate(`/game/${roomId}`);
+
+      //init(room);
     });
 
     return () => {
@@ -65,7 +58,7 @@ function Home() {
           <Box component="span" m={4} width="100%" />
           <Grid container spacing={3} style={{ margin: 0 }}>
             <Grid item lg={4} md={6} xl={3} xs={12}>
-              <OnlineList data={listUserOnline} />
+              <OnlineList />
             </Grid>
             <Grid item lg={4} md={6} xl={3} xs={12}>
               <GameList />

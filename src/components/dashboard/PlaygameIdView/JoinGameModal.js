@@ -16,6 +16,8 @@ import TextField from "@material-ui/core/TextField";
 import SocketManager from "../../../socketio/SocketManager";
 import { useNavigate } from "react-router-dom";
 import GameContext from "../../../contexts/GameContext";
+import UserContext from "../../../contexts/UserContext";
+import PasswordInputModal from "../PasswordInput/PasswordInputModal";
 
 const theme = createMuiTheme({
   palette: {
@@ -91,6 +93,15 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
   const socket = SocketManager.getSocket();
   let history = useNavigate();
   const { init } = useContext(GameContext);
+  const { rooms } = useContext(UserContext);
+
+  const [displayBoardModal, setDisplayBoardModal] = useState(false);
+  const handleShowModal = () => {
+    setDisplayBoardModal(true);
+  };
+  const handleHiddenModal = () => {
+    setDisplayBoardModal(false);
+  };
 
   const handleChange = (text) => (e) => {
     setForm({ ...form, [text]: e.target.value });
@@ -101,7 +112,14 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit("join-room", id);
+    let room = rooms.find((room) => room.id === id);
+    if (room) {
+      if (room.hasPassword) {
+        handleShowModal();
+      } else {
+        socket.emit("join-room", id);
+      }
+    }
   };
 
   return (
@@ -154,6 +172,9 @@ export default function JoinGameModal({ handleToggleModal, onAddBoard }) {
           </form>
         </DialogContent>
       </Dialog>
+      {displayBoardModal ? (
+        <PasswordInputModal handleToggleModal={handleHiddenModal} roomId={id} />
+      ) : null}
     </div>
   );
 }

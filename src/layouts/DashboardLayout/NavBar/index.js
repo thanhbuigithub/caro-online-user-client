@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { useEffect, useContext } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import {
   Avatar,
   Box,
@@ -10,59 +10,59 @@ import {
   Hidden,
   List,
   Typography,
-  makeStyles
-} from '@material-ui/core';
+  makeStyles,
+} from "@material-ui/core";
 
-import NavItem from './NavItem';
-import CupIcon from '../../../library/icon/CupIcon';
-import MatchIcon from '../../../library/icon/MatchIcon';
-import WinmatchIcon from '../../../library/icon/WinmatchIcon';
-import PercentWin from '../../../library/icon/PercentWin';
-import UserContext from '../../../contexts/UserContext';
+import NavItem from "./NavItem";
+import CupIcon from "../../../library/icon/CupIcon";
+import MatchIcon from "../../../library/icon/MatchIcon";
+import WinmatchIcon from "../../../library/icon/WinmatchIcon";
+import PercentWin from "../../../library/icon/PercentWin";
+import UserContext from "../../../contexts/UserContext";
 const user = {
   // avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
+  jobTitle: "Senior Developer",
+  name: "Katarina Smith",
 };
-const colors = ['#e53935', '#43a047', '#fb8c00', '#3949ab']
+const colors = ["#e53935", "#43a047", "#fb8c00", "#3949ab"];
 const items = [
   {
     icon: CupIcon,
-    title: 'Số Cúp'
+    title: "Số Cúp",
   },
   {
     icon: MatchIcon,
-    title: 'Tổng số trận'
+    title: "Tổng số trận",
   },
   {
     icon: WinmatchIcon,
-    title: 'Số trận thắng'
+    title: "Số trận thắng",
   },
   {
     icon: PercentWin,
-    title: 'Tỉ lệ thắng'
+    title: "Tỉ lệ thắng",
   },
 ];
 
 const useStyles = makeStyles(() => ({
   mobileDrawer: {
-    width: 256
+    width: 256,
   },
   desktopDrawer: {
     width: 256,
     top: 64,
-    height: 'calc(100% - 64px)'
+    height: "calc(100% - 64px)",
   },
   avatar: {
-    cursor: 'pointer',
+    cursor: "pointer",
     width: 64,
-    height: 64
+    height: 64,
   },
   button: {
-    textAlign: 'center',
-    width: '90%',
-    margin: `32px auto`
-  }
+    textAlign: "center",
+    width: "90%",
+    margin: `32px auto`,
+  },
 }));
 
 const NavBar = ({ onMobileClose, openMobile }) => {
@@ -76,55 +76,46 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
+  const value = [
+    user.elo,
+    user.numOfMatches,
+    user.winMatches,
+    Math.round((user.winMatches / user.numOfMatches) * 100, 2),
+  ];
+
   const content = (
-    <Box
-      height="100%"
-      display="flex"
-      flexDirection="column"
-    >
-      <Box
-        alignItems="center"
-        display="flex"
-        flexDirection="column"
-        p={2}
-      >
+    <Box height="100%" display="flex" flexDirection="column">
+      <Box alignItems="center" display="flex" flexDirection="column" p={2}>
         <Avatar
           className={classes.avatar}
           component={RouterLink}
           to="/profile"
           src={avatar}
         />
-        <Typography
-          className={classes.name}
-          color="textPrimary"
-          variant="h5"
-        >
+        <Typography className={classes.name} color="textPrimary" variant="h5">
           {user.name}
         </Typography>
-        <Typography
-          color="textSecondary"
-          variant="body2"
-        >
-          {user.isAdmin ? 'Admin' : 'User'}
+        <Typography color="textSecondary" variant="body2">
+          {user.isAdmin ? "Admin" : "User"}
         </Typography>
       </Box>
       <Divider />
       <Box p={2}>
         <List>
-          {items.map((item, index) =>
-          (
+          {items.map((item, index) => (
             <NavItem
               key={index}
               title={item.title}
               icon={item.icon}
               color={colors[index]}
+              value={value[index]}
             />
           ))}
         </List>
       </Box>
       <Box my={2} className={classes.button}>
         <Button
-          onClick={() => { }}
+          onClick={() => {}}
           color="primary"
           fullWidth
           size="large"
@@ -166,13 +157,13 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 NavBar.propTypes = {
   onMobileClose: PropTypes.func,
   openMobile: PropTypes.bool,
-  data: PropTypes.object
+  data: PropTypes.object,
 };
 
 NavBar.defaultProps = {
-  onMobileClose: () => { },
+  onMobileClose: () => {},
   openMobile: false,
-  data: null
+  data: null,
 };
 
 export default NavBar;

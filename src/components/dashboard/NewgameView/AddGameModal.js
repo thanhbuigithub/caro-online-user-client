@@ -3,14 +3,13 @@ import {
   Box,
   InputAdornment,
   Switch,
-  FormControlLabel
-} from '@material-ui/core';
+  FormControlLabel,
+} from "@material-ui/core";
 import {
   withStyles,
   makeStyles,
   ThemeProvider,
   createMuiTheme,
-
 } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -26,10 +25,10 @@ import TextField from "@material-ui/core/TextField";
 import SocketManager from "../../../socketio/SocketManager";
 import GameContext from "../../../contexts/GameContext";
 import { useNavigate } from "react-router-dom";
-import * as Yup from 'yup';
-import { Formik } from 'formik';
-import swal from 'sweetalert';
-import { purple } from '@material-ui/core/colors';
+import * as Yup from "yup";
+import { Formik } from "formik";
+import swal from "sweetalert";
+import { purple } from "@material-ui/core/colors";
 import Grid from "@material-ui/core/Grid";
 const theme = createMuiTheme({
   palette: {
@@ -107,10 +106,10 @@ const DialogContent = withStyles((theme) => ({
 const PurpleSwitch = withStyles({
   switchBase: {
     color: purple[300],
-    '&$checked': {
+    "&$checked": {
       color: purple[500],
     },
-    '&$checked + $track': {
+    "&$checked + $track": {
       backgroundColor: purple[500],
     },
   },
@@ -131,6 +130,7 @@ export default function AddBoardModal({ handleToggleModal }) {
   const socket = SocketManager.getSocket();
   const { init } = useContext(GameContext);
   let history = useNavigate();
+  const [turnTimeLimit, setTurnTimeLimit] = useState(30);
 
   const handleChange = (text) => (e) => {
     setForm({ ...form, [text]: e.target.value });
@@ -157,6 +157,12 @@ export default function AddBoardModal({ handleToggleModal }) {
     socket.emit("create-room");
   };
 
+  const handleChangeTurnTimeLimit = (event) => {
+    const onlyNums = event.target.value.replace(/[^0-9]/g, "");
+    const num = parseInt(onlyNums);
+    setTurnTimeLimit(num);
+  };
+
   return (
     <>
       <Dialog
@@ -176,7 +182,7 @@ export default function AddBoardModal({ handleToggleModal }) {
               className={classes.tittle}
             >
               Create new game
-                  </Typography>
+            </Typography>
           </Box>
         </DialogTitle>
         <DialogContent dividers>
@@ -188,22 +194,22 @@ export default function AddBoardModal({ handleToggleModal }) {
                     checked={checkedA}
                     onChange={handleChangeCheckboxA}
                     name="checkedA"
-                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                    inputProps={{ "aria-label": "secondary checkbox" }}
                     labelplacement="start"
                     edge="end"
                   />
                 }
                 label="Public"
-              /></Grid>
+              />
+            </Grid>
             <Grid item xs={6}>
               <FormControlLabel
-
                 control={
                   <Switch
                     checked={checkedB}
                     onChange={handleChangeCheckboxB}
                     name="checkedA"
-                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                    inputProps={{ "aria-label": "secondary checkbox" }}
                     color="secondary"
                     labelplacement="start"
                     edge="end"
@@ -215,22 +221,40 @@ export default function AddBoardModal({ handleToggleModal }) {
           </Grid>
           <Formik
             initialValues={{
-              password: ''
+              password: "",
+              turnTimeLimit: 30,
             }}
             validationSchema={Yup.object().shape({
-              password: Yup.string().max(10, 'Password contains at most 10 characters').required('Password is required')
+              password: Yup.string().max(
+                10,
+                "Password contains at most 10 characters"
+              ),
+              turnTimeLimit: Yup.number()
+                .min(10)
+                .max(60)
+                .integer("Vui lòng chỉ nhập số nguyên")
+                .required("Bắt buộc"),
             })}
             onSubmit={async (values) => {
-              const { password } = values;
-              await swal({
-                title: "Creating...",
-                text: "Please wait",
-                icon: "/static/loading.gif",
-                button: false,
-                timer: 2000,
-                closeOnClickOutside: false,
-                closeOnEsc: false
-              })
+              const { password, turnTimeLimit } = values;
+              console.log(password);
+              console.log(turnTimeLimit);
+
+              if (checkedA) {
+                socket.emit("create-room", turnTimeLimit);
+              } else {
+                socket.emit("create-room", turnTimeLimit, password);
+              }
+
+              // await swal({
+              //   title: "Creating...",
+              //   text: "Please wait",
+              //   icon: "/static/loading.gif",
+              //   button: false,
+              //   timer: 2000,
+              //   closeOnClickOutside: false,
+              //   closeOnEsc: false,
+              // });
             }}
           >
             {({
@@ -240,44 +264,58 @@ export default function AddBoardModal({ handleToggleModal }) {
               handleSubmit,
               isSubmitting,
               touched,
-              values
+              values,
             }) => (
               <form onSubmit={handleSubmit} className={classes.form}>
-                {checkedB ? (<TextField
-                  error={Boolean(touched.password && errors.password)}
+                <TextField
+                  error={Boolean(touched.turnTimeLimit && errors.turnTimeLimit)}
+                  helperText={touched.turnTimeLimit && errors.turnTimeLimit}
                   fullWidth
-                  helperText={touched.password && errors.password}
-                  label="Password"
+                  label="Thời gian mỗi lượt đánh (min: 10; max: 60)"
                   margin="normal"
-                  name="password"
-                  onBlur={handleBlur}
+                  name="turnTimeLimit"
+                  type="number"
                   onChange={handleChange}
-                  type={showPassword ? 'text' : 'password'}
-                  value={values.password}
+                  onBlur={handleBlur}
+                  value={values.turnTimeLimit}
                   variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <VpnKeyIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={(e) => setShowPassword(!showPassword)}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                          }}
-                          edge="end"
-                        >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />) : null}
-
+                />
+                {checkedB ? (
+                  <TextField
+                    error={Boolean(touched.password && errors.password)}
+                    fullWidth
+                    helperText={touched.password && errors.password}
+                    label="Password"
+                    margin="normal"
+                    name="password"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"}
+                    value={values.password}
+                    variant="outlined"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <VpnKeyIcon />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={(e) => setShowPassword(!showPassword)}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                            }}
+                            edge="end"
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                ) : null}
 
                 <Box my={2}>
                   <Button
@@ -286,10 +324,9 @@ export default function AddBoardModal({ handleToggleModal }) {
                     variant="contained"
                     color="primary"
                     disabled={isSubmitting}
-                    onClick={onClickCreate}
                   >
                     Create
-            </Button>
+                  </Button>
                 </Box>
               </form>
             )}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./index.css";
 import GameContext from "../../../contexts/GameContext";
 import Config from "../../../config/Config";
@@ -12,6 +12,7 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
 import Auth from "../../common/router/auth";
+import InvitePlayerModal from "../invitePlayer/InvitePlayerModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,14 @@ function PlayerHolder({ sat, player }) {
   const classes = useStyles();
   const socket = SocketManager.getSocket();
   const { isSatPlayer } = useContext(GameContext);
+  const [displayBoardModal, setDisplayBoardModal] = useState(false);
+
+  const handleShowModal = () => {
+    setDisplayBoardModal(true);
+  };
+  const handleHiddenModal = () => {
+    setDisplayBoardModal(false);
+  };
 
   const onClickSit = function () {
     socket.emit("sit");
@@ -47,7 +56,7 @@ function PlayerHolder({ sat, player }) {
         <>
           <div>{player.username}</div>
           <Avatar alt={player.username} src="" className={classes.avatar} />
-          <div>Elo. 1000</div>
+          <div>Elo. {player.elo}</div>
         </>
       );
     }
@@ -62,7 +71,7 @@ function PlayerHolder({ sat, player }) {
 
     if (player === null)
       return (
-        <IconButton aria-label="invite">
+        <IconButton aria-label="invite" onClick={handleShowModal}>
           <PersonAddIcon className={classes.icon} />
         </IconButton>
       );
@@ -71,6 +80,9 @@ function PlayerHolder({ sat, player }) {
   return (
     <Paper className={classes.root} elevation={3}>
       {divCreate()}
+      {displayBoardModal ? (
+        <InvitePlayerModal handleToggleModal={handleHiddenModal} />
+      ) : null}
     </Paper>
   );
 }

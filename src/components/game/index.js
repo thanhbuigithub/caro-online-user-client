@@ -13,6 +13,9 @@ import PlayerHolder from "./playerHolder";
 import config from "../../config/Config";
 import Chat from "./chat";
 import History from "./history";
+import UsersInRoomModal from "./usersInRoom/UserInRoomModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,9 +23,41 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const ToastContent = ({ player, acceptDraw, closeToast, toastProps }) => (
+  <Grid
+    container
+    justify="space-around"
+    direction="column"
+    spacing={2}
+    align="center"
+    style={{ padding: 10, color: "white" }}
+  >
+    <Grid item xs={12}>
+      {player.username} xin hoà !!!
+    </Grid>
+    <Grid container item xs={12} justify="center">
+      <Grid container item xs={6} justify="center">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => acceptDraw()}
+        >
+          Đồng ý
+        </Button>
+      </Grid>
+      <Grid container item xs={6} justify="center">
+        <Button variant="contained" color="secondary" onClick={closeToast}>
+          Bỏ qua
+        </Button>
+      </Grid>
+    </Grid>
+  </Grid>
+);
+
 function Game() {
   const classes = useStyles();
   const match = useParams();
+  const location = useLocation();
   const {
     playerX,
     playerO,
@@ -33,6 +68,7 @@ function Game() {
     gameOverHandler,
     chatHandler,
     init,
+    setPlayers,
   } = useContext(GameContext);
   const socket = SocketManager.getSocket();
   let history = useNavigate();
@@ -40,15 +76,31 @@ function Game() {
     return playerX !== null || playerO !== null;
   };
 
+  const [displayBoardModal, setDisplayBoardModal] = useState(false);
+  const handleShowModal = () => {
+    setDisplayBoardModal(true);
+  };
+  const handleHiddenModal = () => {
+    setDisplayBoardModal(false);
+  };
+
   // GAME HANDLE
   useEffect(() => {
     console.log("GAME RENDER");
-    socket.emit("join-room", match.id);
+    if (location.search !== "") {
+      const urlParams = new URLSearchParams(location.search);
+      const pwd = urlParams.get("pwd");
+      socket.emit("join-room", match.id, pwd);
+    } else socket.emit("join-room", match.id);
     console.log("EMIT JOIN-ROOM");
     socket.on("join-room-failed", () => {
       history("/");
     });
-  }, []);
+
+    return () => {
+      socket.emit("leave-room");
+    };
+  }, [location]);
 
   useEffect(() => {
     socket.on("join-room-successful", (room) => {
@@ -62,28 +114,21 @@ function Game() {
   }, [init]);
 
   useEffect(() => {
-    socket.on("new-player-join-room", (username) => {
-      console.log(username + " has joined");
+    socket.on("new-player-join-room", (players) => {
+      //console.log(username + " has joined");
+      setPlayers(players);
     });
 
-    // socket.on("sit-successful", (sit) => {
-    //   console.log("You had sit: " + sit);
-    // });
-
-    // socket.on("ready-successful", () => {
-    //   console.log("You had ready");
-    // });
-
     return () => {
-      socket.off();
+      socket.off("new-player-join-room");
     };
-  }, []);
+  }, [setPlayers]);
 
   useEffect(() => {
-    socket.on("game-over", (winLine) => {
+    socket.on("game-over", ({ winner, winLine, playerX, playerO }) => {
       console.log("GAME OVER!!!");
       console.log(winLine);
-      gameOverHandler(winLine);
+      gameOverHandler(winner, winLine, playerX, playerO);
     });
     return () => {
       socket.off("game-over");
@@ -139,6 +184,22 @@ function Game() {
     };
   }, [chatHandler]);
 
+  useEffect(() => {
+    socket.on("new-surrender", (player) => {
+      toast.info(`${player.username} đã đầu hàng`);
+    });
+  }, []);
+
+  const acceptDraw = () => {
+    socket.emit("accept-draw");
+  };
+
+  useEffect(() => {
+    socket.on("draw-request", (player) => {
+      toast.error(<ToastContent player={player} acceptDraw={acceptDraw} />);
+    });
+  }, []);
+
   return (
     <Grid container className={classes.root} item xs={12}>
       <Grid container justify="space-around">
@@ -172,6 +233,12 @@ function Game() {
           direction="column"
           alignItems="center"
         >
+          <Button variant="contained" color="default" onClick={handleShowModal}>
+            Danh sách người chơi
+          </Button>
+          {displayBoardModal ? (
+            <UsersInRoomModal handleToggleModal={handleHiddenModal} />
+          ) : null}
           <Chat />
           <History />
         </Grid>
