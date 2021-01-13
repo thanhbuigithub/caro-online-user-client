@@ -3,12 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@babel/plugin-transform-react-jsx": "^7.12.12",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
     "@material-ui/core": "^5.0.0-alpha.22",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
+=======
+    "@babel/plugin-transform-react-jsx": "^7.12.5",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+>>>>>>> parent of de9d7ec... change package-log and package for deploy
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
