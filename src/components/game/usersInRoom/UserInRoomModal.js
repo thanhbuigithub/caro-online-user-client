@@ -192,6 +192,7 @@ export default function UsersInRoomModal({ handleToggleModal }) {
             <List className={classes.list}>
               {players &&
                 players.map((user, index) => {
+                  console.log(user);
                   return (
                     <React.Fragment key={index}>
                       <StyledListItem button>
@@ -205,7 +206,9 @@ export default function UsersInRoomModal({ handleToggleModal }) {
                             }}
                             variant="dot"
                           >
-                            <Avatar aria-label="recipe" src="/static/logo.svg">
+                            <Avatar
+                              aria-label="recipe"
+                              src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/logo.svg"}>
                               <PersonIcon style={{ color: "black" }} />
                             </Avatar>
                           </StyledBadge>

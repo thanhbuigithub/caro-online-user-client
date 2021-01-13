@@ -22,7 +22,7 @@ export default (props) => {
   const [error, setError] = useState("");
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
   const [avatar, setAvatar] = useState(null);
-
+  const [isSocialLogin, setIsSocialLogin] = useState(false);
   const {
     _id,
     name,
@@ -136,6 +136,8 @@ export default (props) => {
         playerDetails,
         setPlayerDetails,
         openPlayerDetailDialog,
+        isSocialLogin,
+        setIsSocialLogin,
       }}
     >
       {props.children}

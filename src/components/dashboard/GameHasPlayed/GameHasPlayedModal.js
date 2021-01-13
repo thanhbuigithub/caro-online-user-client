@@ -214,7 +214,7 @@ export default function InvitePlayerModal({ handleToggleModal }) {
                             >
                               <Avatar
                                 aria-label="recipe"
-                                src="/static/logo.svg"
+                                src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/logo.svg"}
                               >
                                 <PersonIcon style={{ color: "black" }} />
                               </Avatar>
