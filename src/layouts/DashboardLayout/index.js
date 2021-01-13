@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { makeStyles, Button, Grid } from "@material-ui/core";
-import NavBar from "./NavBar/index";
+import NavBar from "./NavBar";
 import TopBar from "./TopBar";
 
 import userApi from "../../api/userApi";
@@ -219,15 +219,15 @@ const DashboardLayout = () => {
           </div>
         </>
       ) : (
-        <div
-          className={classes.contentContainer}
-          style={{ paddingTop: "64px" }}
-        >
-          <div className={classes.content}>
-            <Outlet />
+          <div
+            className={classes.contentContainer}
+            style={{ paddingTop: "64px" }}
+          >
+            <div className={classes.content}>
+              <Outlet />
+            </div>
           </div>
-        </div>
-      )}
+        )}
       <ToastContainer
         position="top-right"
         autoClose={5000}
