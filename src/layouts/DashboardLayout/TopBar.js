@@ -30,7 +30,6 @@ import auth from "../../components/common/router/auth";
 import UserContext from "../../contexts/UserContext";
 import socketManager from "../../socketio/SocketManager";
 import userApi from "../../api/userApi";
-import Auth from "../../components/common/router/auth";
 
 const StyledMenu = withStyles({
   paper: {
@@ -97,9 +96,15 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { _id, user, handleSaveUser, handleSaveAvatar, avatar } = useContext(
-    UserContext
-  );
+  const {
+    _id,
+    user,
+    handleSaveUser,
+    handleSaveAvatar,
+    isUploadAvatar,
+    handleIsUploadAvatar,
+    avatar,
+  } = useContext(UserContext);
   const socket = socketManager.getSocket();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -109,7 +114,7 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
   };
 
   useEffect(() => {
-    const user = Auth.getCurrentUser();
+    const user = auth.getCurrentUser();
     console.log(socket);
     console.log("EMIT JOIN");
     socket.emit("join", user._id);
@@ -134,6 +139,40 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
     };
     getProfile();
   }, []);
+
+  // useEffect(() => {
+  //   const getAvatar = async () => {
+  //     try {
+  //       const id = auth.getCurrentUser()._id;
+  //       const fetchUser = await userApi.getAvatar(id);
+  //       if (fetchUser.success) {
+  //         handleSaveAvatar(fetchUser.path);
+  //         console.log("Update Avatar Later");
+  //       }
+  //     } catch (err) {
+  //       console.log("Avatar not updated");
+  //     }
+  //   };
+  //   getAvatar();
+  // }, []);
+
+  // useEffect(() => {
+  //   const getAvatar = async () => {
+  //     try {
+  //       const fetchUser = await userApi.getAvatar(user._id);
+  //       if (fetchUser.success) {
+  //         handleSaveAvatar(fetchUser.path);
+  //         console.log("Update Avatar Later");
+  //         handleIsUploadAvatar(false);
+  //       }
+  //     } catch (err) {
+  //       console.log("Avatar not updated");
+  //     }
+  //   };
+  //   if (isUploadAvatar) {
+  //     getAvatar();
+  //   }
+  // });
 
   // useEffect(() => {
   //   //const user = auth.getCurrentUser();

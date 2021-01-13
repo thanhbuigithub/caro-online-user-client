@@ -6,6 +6,7 @@ import EventIcon from '@material-ui/icons/Event';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import moment from 'moment';
 import userApi from "../../../api/userApi";
+import swal from 'sweetalert';
 import {
   Avatar,
   Box,
@@ -39,13 +40,15 @@ const useStyles = makeStyles((theme) => ({
 const Profile = ({ className, ...rest }) => {
   const classes = useStyles();
   const inputFileRef = createRef(null);
-  const { user, avatar, handleIsUploadAvatar, handleSaveAvatar } = useContext(UserContext);
+  const { user, avatar, isUploadAvatar, handleIsUploadAvatar, handleSaveAvatar } = useContext(UserContext);
   const date = new Date(user.date);
   const dateText = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
   const timeText = moment(date).format('HH:mm:ss');
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [isUpload, setIsUpload] = useState(false);
+
+
   const handleResetImage = () => {
     URL.revokeObjectURL(selectedFile);
     inputFileRef.current.value = null;
@@ -75,7 +78,7 @@ const Profile = ({ className, ...rest }) => {
   const handleUploadImage = async () => {
     if (selectedFile) {
       let formData = new FormData();
-      formData.append('caption', user.id);
+      formData.append('caption', user._id);
       formData.append('file', uploadedImage);
       // const object = {};
       // formData.forEach((value, key) => object[key] = value);
@@ -83,9 +86,14 @@ const Profile = ({ className, ...rest }) => {
       // console.log(object);
       try {
         const uploadImage = await userApi.uploadAvatar(formData);
-        await handleSaveAvatar(uploadImage.image.filename);
+        handleSaveAvatar(uploadImage.image.filename);
         setIsUpload(false);
-
+        handleIsUploadAvatar(true);
+        await swal("Yeah! Your avatar has been changed!", {
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        });
       } catch (err) {
         console.log(err.response)
       }

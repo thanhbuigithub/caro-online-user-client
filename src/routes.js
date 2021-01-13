@@ -9,6 +9,7 @@ import FogotPassWordView from "./components/auth/ForgotPassWordView";
 import ActiveAccountView from './components/auth/ActiveAccountView';
 import ResetPassWordView from './components/auth/ResetPassWordView';
 import Profile from './components/account/AccountView';
+import ChangePassWordView from './components/account/ChangePassWordView';
 
 import Home from "./components/dashboard";
 import NotFoundView from './components/errors/NotFoundView';
@@ -26,7 +27,7 @@ const routes = [
             { path: "/active/:token", element: <Navigate to="/" /> },
             { path: "/reset_password/:token", element: <Navigate to="/" /> },
             { path: "/profile", element: <Profile /> },
-            { path: "/change_password", element: <Navigate to="/" /> },
+            { path: "/change_password", element: <ChangePassWordView /> },
             { path: "/game/:id", element: <GameView /> },
             { path: '/404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> },

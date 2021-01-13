@@ -87,6 +87,16 @@ const DashboardLayout = () => {
   const isHomePage = location.pathname === "/";
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
   const { setListUserOnline, setRooms, setRankList } = useContext(UserContext);
+
+  const {
+    handleSaveUser,
+    handleIsUploadAvatar,
+    isUploadAvatar,
+    _id,
+    avatar,
+    handleSaveAvatar,
+    user,
+  } = useContext(UserContext);
   const match = useParams();
 
   const acceptInvite = (roomId, password) => {
@@ -153,6 +163,43 @@ const DashboardLayout = () => {
   //     return fetchAvatar();
   //   }
   // }, []);
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar First");
+        }
+      } catch (err) {
+        console.log("Avatar not updated");
+      }
+    };
+    getAvatar();
+  }, []);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar Later");
+          handleIsUploadAvatar(false);
+        }
+      } catch (err) {
+        console.log("Error: ", err.response);
+      }
+    };
+    if (isUploadAvatar) {
+      fetchAvatar();
+    }
+  });
 
   return (
     <div className={classes.root}>

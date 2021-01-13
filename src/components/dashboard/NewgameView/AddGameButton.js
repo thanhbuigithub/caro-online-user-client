@@ -29,7 +29,10 @@ const useStyles = makeStyles((theme) => ({
     },
     cardTitle: {
         color: '#8e24aa'
-    }
+    },
+    iconPing: {
+        padding: theme.spacing(1),
+    },
 }));
 
 export default function AddBoardButton({ onAddBoard }) {
@@ -44,7 +47,9 @@ export default function AddBoardButton({ onAddBoard }) {
     return (
         <>
             <Card className={classes.card} onClick={handleShowModal}>
-                <AddCircleIcon className={classes.cardIcon} />
+                <div className={classes.iconPing}>
+                    <AddCircleIcon className={classes.cardIcon} />
+                </div>
             </Card>
             {displayBoardModal ? <AddGameModal handleToggleModal={handleHiddenModal} onAddBoard={onAddBoard} /> : null}
 
