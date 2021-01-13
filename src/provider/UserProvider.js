@@ -16,6 +16,7 @@ export default (props) => {
     numOfMatches: 0,
     winMatches: 0,
     isAdmin: false,
+    isUploadAvatarFetch: false,
   });
   const [error, setError] = useState("");
   const [isUploadAvatar, setIsUploadAvatar] = useState(false);
@@ -31,6 +32,7 @@ export default (props) => {
     elo,
     numOfMatches,
     winMatches,
+    isUploadAvatarFetch,
   } = user;
   const [rooms, setRooms] = useState([]);
 
@@ -55,6 +57,7 @@ export default (props) => {
       elo: fetchUser.elo,
       numOfMatches: fetchUser.numOfMatches,
       winMatches: fetchUser.winMatches,
+      isUploadAvatarFetch: fetchUser.isUploadAvatar,
     });
   };
 
@@ -105,6 +108,8 @@ export default (props) => {
         isUploadAvatar,
         _id,
         avatar,
+        setAvatar,
+        isUploadAvatarFetch,
         handleSaveAvatar,
         handleIsUploadAvatar,
         handleResetError,

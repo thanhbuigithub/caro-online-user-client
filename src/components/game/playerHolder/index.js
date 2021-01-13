@@ -3,6 +3,7 @@ import "./index.css";
 import GameContext from "../../../contexts/GameContext";
 import Config from "../../../config/Config";
 import SocketManager from "../../../socketio/SocketManager";
+import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import { deepOrange, green } from "@material-ui/core/colors";

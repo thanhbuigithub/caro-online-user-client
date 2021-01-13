@@ -86,7 +86,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           className={classes.avatar}
           component={RouterLink}
           to="/profile"
-          src={avatar || "/static/unknown_avatar.jpg"}
+          src={avatar || `/static/unknown_avatar.jpg`}
         />
         <Typography className={classes.name} color="textPrimary" variant="h5">
           {user.name}
@@ -111,7 +111,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
       </Box>
       <Box my={2} className={classes.button}>
         <Button
-          onClick={() => {}}
+          onClick={() => { }}
           color="primary"
           fullWidth
           size="large"
@@ -157,7 +157,7 @@ NavBar.propTypes = {
 };
 
 NavBar.defaultProps = {
-  onMobileClose: () => {},
+  onMobileClose: () => { },
   openMobile: false,
   data: null,
 };

@@ -94,10 +94,50 @@ const DashboardLayout = () => {
     isUploadAvatar,
     _id,
     avatar,
+    setAvatar,
     handleSaveAvatar,
     user,
   } = useContext(UserContext);
   const match = useParams();
+
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar First");
+        }
+      } catch (err) {
+        console.log("Avatar not updated");
+      }
+    };
+    getAvatar();
+  }, []);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const id = auth.getCurrentUser()._id;
+        const fetchUser = await userApi.getAvatar(id);
+        if (fetchUser.success) {
+          // handleSaveAvatar(fetchUser.path);
+          handleSaveAvatar(fetchUser.pathId);
+          console.log("Update Avatar Later");
+          handleIsUploadAvatar(false);
+        }
+      } catch (err) {
+        console.log("Error: ", err.response);
+      }
+    };
+    if (isUploadAvatar) {
+      fetchAvatar();
+    }
+  });
+
 
   const acceptInvite = (roomId, password) => {
     socket.emit("accept-invite", roomId);
@@ -148,58 +188,7 @@ const DashboardLayout = () => {
       //setListUserOnline(list_user_online);
     });
   }, []);
-  // useEffect(() => {
-  //   const fetchAvatar = async () => {
-  //     try {
-  //       const avatarUser = await userApi.loadAvatar(id);
-  //       handleSaveAvatar(avatarUser);
-  //       console.log(avatarUser);
-  //       handleIsUploadAvatar(false);
-  //     } catch (err) {
-  //       console.log("Error: ", err.response);
-  //     }
-  //   };
-  //   if (isUploadAvatar) {
-  //     return fetchAvatar();
-  //   }
-  // }, []);
 
-  useEffect(() => {
-    const getAvatar = async () => {
-      try {
-        const id = auth.getCurrentUser()._id;
-        const fetchUser = await userApi.getAvatar(id);
-        if (fetchUser.success) {
-          // handleSaveAvatar(fetchUser.path);
-          handleSaveAvatar(fetchUser.pathId);
-          console.log("Update Avatar First");
-        }
-      } catch (err) {
-        console.log("Avatar not updated");
-      }
-    };
-    getAvatar();
-  }, []);
-
-  useEffect(() => {
-    const fetchAvatar = async () => {
-      try {
-        const id = auth.getCurrentUser()._id;
-        const fetchUser = await userApi.getAvatar(id);
-        if (fetchUser.success) {
-          // handleSaveAvatar(fetchUser.path);
-          handleSaveAvatar(fetchUser.pathId);
-          console.log("Update Avatar Later");
-          handleIsUploadAvatar(false);
-        }
-      } catch (err) {
-        console.log("Error: ", err.response);
-      }
-    };
-    if (isUploadAvatar) {
-      fetchAvatar();
-    }
-  });
 
   return (
     <div className={classes.root}>
