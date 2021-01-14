@@ -157,6 +157,7 @@ const Rank = ({ className, ...rest }) => {
         <Box height={300} position="relative" overflow="auto">
           <List className={classes.list}>
             {rankList.map((user, index) => {
+              console.log(user)
               return (
                 <React.Fragment key={index}>
                   <StyledListItem
@@ -165,14 +166,14 @@ const Rank = ({ className, ...rest }) => {
                       handleClick(index, user.id);
                     }}
                   >
-                    <Avatar aria-label="recipe" src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/logo.svg"}>
+                    <Avatar aria-label="recipe" src={user.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${user.id}` : "/static/unknown_avatar.jpg"}>
                       <PersonIcon style={{ color: "black" }} />
                     </Avatar>
                     <ListItemText primary={user.username} style={{ marginLeft: '16px' }} />
                     {/* {open[index] ? <ExpandLess /> : <ExpandMore />} */}
                     {user.elo}
                   </StyledListItem>
-                  <Collapse in={open[index]} timeout="auto" unmountOnExit>
+                  {/* <Collapse in={open[index]} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <StyledListItem button className={classes.nested}>
                         <ListItemIcon>
@@ -181,7 +182,7 @@ const Rank = ({ className, ...rest }) => {
                         <ListItemText primary="Thông số" />
                       </StyledListItem>
                     </List>
-                  </Collapse>
+                  </Collapse> */}
                 </React.Fragment>
               );
             })}
