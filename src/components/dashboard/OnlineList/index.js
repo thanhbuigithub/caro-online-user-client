@@ -181,9 +181,9 @@ const OnlineList = ({ className, data, ...rest }) => {
                         </StyledBadge>
                       </ListItemIcon>
                       <ListItemText primary={user.username} />
-                      {open[index] ? <ExpandLess /> : <ExpandMore />}
+                      {/* {open[index] ? <ExpandLess /> : <ExpandMore />} */}
                     </StyledListItem>
-                    <Collapse in={open[index]} timeout="auto" unmountOnExit>
+                    {/* <Collapse in={open[index]} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
                         <StyledListItem button className={classes.nested}>
                           <ListItemIcon>
@@ -192,7 +192,7 @@ const OnlineList = ({ className, data, ...rest }) => {
                           <ListItemText primary="Thông số" />
                         </StyledListItem>
                       </List>
-                    </Collapse>
+                    </Collapse> */}
                   </React.Fragment>
                 );
               })}

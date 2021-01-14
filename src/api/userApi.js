@@ -98,9 +98,9 @@ const userApi = {
     return axiosClient.post(url, { token: token });
   },
 
-  getAllGames: () => {
+  getAllGames: (userId) => {
     const url = "/user/games";
-    return axiosClient.get(url);
+    return axiosClient.post(url, { userId });
   },
 };
 

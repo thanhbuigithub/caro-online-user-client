@@ -131,7 +131,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function DetailPlayerModal({}) {
+export default function DetailPlayerModal({ }) {
   const classes = useStyles();
   const socket = SocketManager.getSocket();
   let history = useNavigate();
@@ -188,7 +188,7 @@ export default function DetailPlayerModal({}) {
                 <Avatar
                   className={classes.avatar}
                   to="/profile"
-                  src={avatar || `/static/unknown_avatar.jpg`}
+                  src={playerDetails.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${playerDetails.id}` : `/static/unknown_avatar.jpg`}
                 />
                 <Typography
                   className={classes.name}
