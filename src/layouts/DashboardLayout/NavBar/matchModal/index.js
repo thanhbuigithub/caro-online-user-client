@@ -266,7 +266,7 @@ export default function EnhancedTable() {
                                 {game.playerX.username}
                               </Typography>
                               <Box display="flex" justifyContent="flex-end">
-                                {game.winner === null && (
+                                {game.winner === null ? (
                                   <Typography
                                     variant="caption"
                                     display="block"
@@ -274,8 +274,7 @@ export default function EnhancedTable() {
                                   >
                                     Draw
                                   </Typography>
-                                )}
-                                {game.winner !== null && game.winner === 1 ? (
+                                ) : game.winner === 1 ? (
                                   <Typography
                                     variant="caption"
                                     display="block"
@@ -318,7 +317,7 @@ export default function EnhancedTable() {
                               <Typography color="textPrimary" variant="body1">
                                 {game.playerO.username}
                               </Typography>
-                              {game.winner === null && (
+                              {game.winner === null ? (
                                 <Typography
                                   variant="caption"
                                   display="block"
@@ -326,8 +325,7 @@ export default function EnhancedTable() {
                                 >
                                   Draw
                                 </Typography>
-                              )}
-                              {game.winner !== null && game.winner === 2 ? (
+                              ) : game.winner === 2 ? (
                                 <Typography
                                   variant="caption"
                                   display="block"
