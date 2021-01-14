@@ -87,7 +87,9 @@ function PlayerHolder({ sat, player }) {
             <strong>{player.username}</strong>
           </div>
           <div className={classes.wrapper}>
-            <Avatar alt={player.username} src="" className={classes.avatar} />
+            <Avatar alt={player.username}
+              src={player.isUploadAvatar ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${player.id}` : null}
+              className={classes.avatar} />
             {playerTurn() !== null && (
               <CircularProgress
                 variant="static"

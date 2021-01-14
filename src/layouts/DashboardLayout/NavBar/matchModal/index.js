@@ -29,7 +29,7 @@ import { Avatar, Box, Button, Collapse } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import userApi from "../../../../api/userApi";
-
+import auth from "../../../../components/common/router/auth";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -91,8 +91,8 @@ function EnhancedTableHead(props) {
               headCell.numeric === true
                 ? "right"
                 : headCell.numeric === false
-                ? "left"
-                : "center"
+                  ? "left"
+                  : "center"
             }
             padding="default"
             sortDirection={orderBy === headCell.id ? order : false}
@@ -169,23 +169,9 @@ export default function EnhancedTable() {
   const [openModal, setOpenModal] = useState(false);
   const [listGame, setListGame] = useState([]);
   const [gameIndex, setGameIndex] = useState(-1);
-  const listUsers = [
-    {
-      _id: "1",
-      username: "fake",
-      isActive: true,
-      isUploadAvatar: false,
-    },
-  ];
+
   // const {
-  //     listUsers,
-  //     isChanged,
-  //     handleDisableAccess,
-  //     handleEnableAccess,
-  //     handleIsChanged,
-  //     setListUsers,
-  //     setListUsersTemp,
-  //     handleSetListUsers
+  //   user
   // } = useContext(UserContext);
 
   // useEffect(() => {
@@ -195,7 +181,8 @@ export default function EnhancedTable() {
   useEffect(() => {
     const getAllGames = async () => {
       try {
-        const games = await userApi.getAllGames();
+        const id = auth.getCurrentUser()._id;
+        const games = await userApi.getAllGames(id);
         setListGame(games);
       } catch (err) {
         console.log("header: Failed to get all games: ", err);
@@ -297,36 +284,34 @@ export default function EnhancedTable() {
                                     Win
                                   </Typography>
                                 ) : (
-                                  <Typography
-                                    variant="caption"
-                                    display="block"
-                                    className={classes.deny}
-                                  >
-                                    Lose
-                                  </Typography>
-                                )}
+                                    <Typography
+                                      variant="caption"
+                                      display="block"
+                                      className={classes.deny}
+                                    >
+                                      Lose
+                                    </Typography>
+                                  )}
                               </Box>
                             </Box>
                             <Avatar
                               style={{ marginLeft: "16px" }}
                               className={classes.avatar}
                               src={
-                                false
-                                  ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${game._id}`
-                                  : "/static/logo.svg"
+                                `${process.env.REACT_APP_ENDPOINT}/api/image/file/${game.playerX.id}`
+                                || "/static/logo.svg"
                               }
                             ></Avatar>
                           </Box>
                         </TableCell>
-                        <TableCell>{" - "}</TableCell>
+                        <TableCell align="center">{" - "}</TableCell>
                         <TableCell align="right">
                           <Box alignItems="center" display="flex">
                             <Avatar
                               className={classes.avatar}
                               src={
-                                false
-                                  ? `${process.env.REACT_APP_ENDPOINT}/api/image/file/${game._id}`
-                                  : "/static/logo.svg"
+                                `${process.env.REACT_APP_ENDPOINT}/api/image/file/${game.playerO.id}`
+                                || "/static/logo.svg"
                               }
                             ></Avatar>
                             <Box flexDirection="column" display="flex">
@@ -351,14 +336,14 @@ export default function EnhancedTable() {
                                   Win
                                 </Typography>
                               ) : (
-                                <Typography
-                                  variant="caption"
-                                  display="block"
-                                  className={classes.deny}
-                                >
-                                  Lose
-                                </Typography>
-                              )}
+                                  <Typography
+                                    variant="caption"
+                                    display="block"
+                                    className={classes.deny}
+                                  >
+                                    Lose
+                                  </Typography>
+                                )}
                             </Box>
                           </Box>
                         </TableCell>
@@ -384,7 +369,7 @@ export default function EnhancedTable() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={listUsers.length}
+              count={listGame.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onChangePage={handleChangePage}

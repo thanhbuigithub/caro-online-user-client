@@ -31,10 +31,6 @@ const Auth = {
     const token = this.getAccessToken();
     return jwt_decode(token);
   },
-  getCurrentUser: function () {
-    const token = this.getAccessToken();
-    return jwt_decode(token);
-  },
 };
 
 export default Auth;
