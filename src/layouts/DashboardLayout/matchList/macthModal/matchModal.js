@@ -96,6 +96,11 @@ export default function CustomizedDialogs({
     chatHistory = game.chatHistory;
   }
 
+  const handleToggleClose = () => {
+    handleToggle();
+    setCurrentMove(0);
+  };
+
   function checkWinCell(winLine, row, col) {
     if (winLine == null) {
       return false;
@@ -185,12 +190,12 @@ export default function CustomizedDialogs({
     <Dialog
       fullWidth
       maxWidth="xl"
-      onClose={handleToggle}
+      onClose={handleToggleClose}
       className={classes.root}
       aria-labelledby="customized-dialog-title"
       open={status}
     >
-      <DialogTitle id="customized-dialog-title" onClose={handleToggle}>
+      <DialogTitle id="customized-dialog-title" onClose={handleToggleClose}>
         <Box display="flex" alignItems="center">
           <Box display="flex" justifyContent="center">
             <Chip
