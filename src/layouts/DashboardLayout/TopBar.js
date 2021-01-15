@@ -115,10 +115,10 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
   };
 
   useEffect(() => {
-    const user = auth.getCurrentUser();
+    const token = auth.getAccessToken();
     console.log(socket);
     console.log("EMIT JOIN");
-    socket.emit("join", user._id);
+    socket.emit("join", token);
     // return () => {
     //   socketManager.closeSocket();
     // };
@@ -243,17 +243,19 @@ const TopBar = ({ className, data, onMobileNavOpen, ...rest }) => {
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </StyledMenuItem>
-          {!isSocialLogin ? <StyledMenuItem
-            onClick={() => {
-              navigate("/change_password");
-              handleClose();
-            }}
-          >
-            <ListItemIcon>
-              <VpnKeyIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary="Change Password" />
-          </StyledMenuItem> : null}
+          {!isSocialLogin ? (
+            <StyledMenuItem
+              onClick={() => {
+                navigate("/change_password");
+                handleClose();
+              }}
+            >
+              <ListItemIcon>
+                <VpnKeyIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Change Password" />
+            </StyledMenuItem>
+          ) : null}
           <StyledMenuItem
             onClick={() => {
               auth.logout(() => {
