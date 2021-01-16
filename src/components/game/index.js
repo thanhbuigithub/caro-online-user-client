@@ -187,6 +187,9 @@ function Game() {
     socket.on("new-surrender", (player) => {
       toast.info(`${player.username} đã đầu hàng`);
     });
+    return () => {
+      socket.off("new-surrender");
+    };
   }, []);
 
   const acceptDraw = () => {
@@ -197,6 +200,9 @@ function Game() {
     socket.on("draw-request", (player) => {
       toast.error(<ToastContent player={player} acceptDraw={acceptDraw} />);
     });
+    return () => {
+      socket.off("draw-request");
+    };
   }, []);
 
   return (

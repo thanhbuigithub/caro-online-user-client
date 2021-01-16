@@ -20,7 +20,10 @@ import WinmatchIcon from "../../../library/icon/WinmatchIcon";
 import PercentWin from "../../../library/icon/PercentWin";
 import UserContext from "../../../contexts/UserContext";
 import MatchModal from "./matchModal/allMatchModal";
+import userApi from "../../../api/userApi";
+
 const colors = ["#e53935", "#43a047", "#fb8c00", "#3949ab"];
+
 const items = [
   {
     icon: CupIcon,
@@ -64,7 +67,7 @@ const useStyles = makeStyles(() => ({
 const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
-  const { user, avatar } = useContext(UserContext);
+  const { user, avatar, handleSaveUser } = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     if (openMobile && onMobileClose) {
@@ -75,24 +78,38 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
   const handleClickPlayer = () => {
     setOpenModal(true);
-  }
+  };
 
   const handleToggle = () => {
     setOpenModal(false);
   };
-  const percent = user.numOfMatches > 0 ? Math.round((user.winMatches / user.numOfMatches) * 100, 2) : 0;
-  const value = [
-    user.elo,
-    user.numOfMatches,
-    user.winMatches,
-    percent
-  ];
+  const percent =
+    user.numOfMatches > 0
+      ? Math.round((user.winMatches / user.numOfMatches) * 100, 2)
+      : 0;
+
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        console.log("TOPBAR RENDERING");
+        const fetchUser = await userApi.getProfile();
+        handleSaveUser(fetchUser);
+        // socket.emit("join", fetchUser._id);
+        // console.log("EMIT JOIN");
+        console.log("USER: " + JSON.stringify(fetchUser));
+        //socket.emit("join", fetchUser._id);
+      } catch (err) {
+        console.log("header: Failed to get profile: ", err);
+      }
+    };
+    getProfile();
+  }, []);
+
+  const value = [user.elo, user.numOfMatches, user.winMatches, percent];
 
   const content = (
     <Box height="100%" display="flex" flexDirection="column">
-      <MatchModal
-        status={openModal}
-        handleToggle={handleToggle} />
+      <MatchModal status={openModal} handleToggle={handleToggle} />
       <Box alignItems="center" display="flex" flexDirection="column" p={2}>
         <Avatar
           className={classes.avatar}
@@ -169,7 +186,7 @@ NavBar.propTypes = {
 };
 
 NavBar.defaultProps = {
-  onMobileClose: () => { },
+  onMobileClose: () => {},
   openMobile: false,
   data: null,
 };
